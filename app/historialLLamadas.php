@@ -19,7 +19,7 @@ class historialLLamadas extends Model
         return $this->hasOne(User::class, 'id', 'id_usuario');
     }
     public function comentario(){
-        return $this->hasMany(comentariosLLamadas::class, 'id_llamada', 'id_llamada');
+        return $this->hasMany(comentariosLlamadas::class, 'id_llamada', 'id_llamada');
     }
 
 }
