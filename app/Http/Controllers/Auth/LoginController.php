@@ -85,14 +85,25 @@ class LoginController extends Controller
 
     public function createAdmin(){
 
+        // $user = new User([ // Creacion del suario
+        //     'name'     => 'Administrador',
+        //     'usuario' => 'admin',
+        //     'email'    => 'administrador@missingcall.com',
+        //     'password' => bcrypt('missingcalladmin'),
+        //     'type' => 'user'
+        // ]);
+        // $user->save();
+
+
         $user = new User([ // Creacion del suario
-            'name'     => 'Administrador',
-            'usuario' => 'admin',
-            'email'    => 'administrador@missingcall.com',
-            'password' => bcrypt('missingcalladmin'),
+            'name'     => 'Alberto Romario',
+            'usuario' => 'alberto',
+            'email'    => 'alberto@missingcall.com',
+            'password' => bcrypt('test'),
             'type' => 'user'
         ]);
         $user->save();
+
 
 
 
