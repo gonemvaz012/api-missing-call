@@ -41,6 +41,7 @@ class UserController extends Controller
     public function createUser(Request $res){
 
         $res->validate([
+            'nombre' => 'required',
             'password' => 'required',
             'usuario' => 'required|unique:users'
         ]);
@@ -57,6 +58,32 @@ class UserController extends Controller
 
 
 
+    }
+
+
+    public function updateUser(Request $res){
+        $res->validate([
+            'name' => 'required',
+            'usuario' => 'required|unique:users,usuario,' . $res->id
+        ]);
+
+          $user =  User::find($res->id); // Creacion del suario
+          $user->name = $res->name;
+          $user->usuario  = $res->usuario;
+            if($res->password){
+                $user->password = bcrypt($res->password);
+            }
+          $user->type = 'user';
+            $user->extension = $res->extension;
+        $user->save();
+
+
+    }
+
+    public function deleteUser(Request $res){
+        $user =  User::find($res->user_id);
+        $user->delete();
+        return true;
     }
 
 

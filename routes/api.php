@@ -33,6 +33,8 @@ Route::group(['middleware' => 'cors'], function () {
      Route::post('/listado/admin', 'ColaController@ListadoAdmin');
      Route::post('/create', 'ColaController@Create');
      Route::post('/estadisticas', 'ColaController@estadisticasCola');
+     Route::post('/update', 'ColaController@updateCola');
+     Route::post('/delete', 'ColaController@deleteCola');
      
     });
     
@@ -48,6 +50,9 @@ Route::group(['middleware' => 'cors'], function () {
     Route::prefix('user')->group(function(){
         Route::post('/listado', 'UserController@Listado');
         Route::post('/create', 'UserController@createUser');
+        Route::post('/update', 'UserController@updateUser');
+        Route::post('/delete', 'UserController@deleteUser');
+        
     });
     
     

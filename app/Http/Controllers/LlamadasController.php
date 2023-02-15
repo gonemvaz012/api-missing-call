@@ -33,8 +33,8 @@ class LlamadasController extends Controller
         }
 
         if ($request->filterDate) {
-            $desde = Carbon::create($request->filterDate[0])->subDay(1)->format('Y-m-d');
-            $hasta = Carbon::create($request->filterDate[1])->subDay(1)->format('Y-m-d');
+            $desde = Carbon::create($request->filterDate['desde'])->subDay(1)->format('Y-m-d');
+            $hasta = Carbon::create($request->filterDate['hasta'])->subDay(1)->format('Y-m-d');
             $query->whereDate('fecha', '>', $desde)->whereDate('fecha', '<', $hasta);
         }
     
@@ -66,29 +66,20 @@ class LlamadasController extends Controller
         $searchValue = $request->search;
     
         $query = historialLLamadas::with('comentario.user')->with('user')->orderBy($columns[$column], $dir);
-    
-        if ($request->filterCola && $request->filterCola != 0 ) {
-            $query->where('cola', $request->filterCola);
-        }
-        if ($request->menu && $request->menu != 0 ) {
-            $query->where('state', $request->menu);
-        }
-
         if ($request->filterDate) {
-            $desde = Carbon::create($request->filterDate[0])->subDay(1)->format('Y-m-d');
-            $hasta = Carbon::create($request->filterDate[1])->subDay(1)->format('Y-m-d');
+            $desde = Carbon::create($request->filterDate['desde'])->subDay(1)->format('Y-m-d');
+            $hasta = Carbon::create($request->filterDate['hasta'])->subDay(1)->format('Y-m-d');
             $query->whereDate('fecha', '>', $desde)->whereDate('fecha', '<', $hasta);
         }
     
-        if ($request->filterDay) {
-            $hoy = Carbon::now()->subDay(1)->format('Y-m-d');
-            $query->whereDate('created_at', '=', $hoy);
-        }
+        // if ($request->filterDay) {
+        //     $hoy = Carbon::now()->subDay(1)->format('Y-m-d');
+        //     $query->whereDate('created_at', '=', $hoy);
+        // }
     
         if ($searchValue) {
             $query->where(function ($query) use ($searchValue) {
                 $query->where('id_llamada', 'like', '%' . $searchValue . '%')
-                     ->orWhere('numero_llamante', 'like', '%' . $searchValue . '%')
                     ->orWhere('created_at', 'like', '%' . $searchValue . '%');
             });
         }
@@ -115,14 +106,14 @@ class LlamadasController extends Controller
         $activy->save();
 
         if($res->completa){
-            $llamada = Llamadas::where('id_llamada', $res->id_llamada)->first();
+            $llamada = Llamadas::where('id', $res->id)->first();
             $llamada->state = 3;
             $llamada->devolucion_n_efectiva = true;
             $llamada->save();
 
             $date = Carbon::now();
             $Historial = new historialLLamadas();
-            $Historial->id_llamada = $res->id_llamada;
+            $Historial->id_llamada = $llamada->id;
             $Historial->id_usuario = $res->user_id; 
             $Historial->devolucion_n_efectiva = true; 
             $Historial->fecha  = $date->format('Y-m-d');
@@ -135,7 +126,7 @@ class LlamadasController extends Controller
 
     // create comentarios 
     public function createLog(Request $res){
-        $llamada = Llamadas::where('id_llamada', $res->id_llamada)->first();
+        $llamada = Llamadas::where('id', $res->id)->first();
         $llamada->state = 2;
         $llamada->save();
 
@@ -154,14 +145,14 @@ class LlamadasController extends Controller
         $activy->save();
 
         if($res->completa){
-            $llamada = Llamadas::where('id_llamada', $res->id_llamada)->first();
+            $llamada = Llamadas::where('id', $res->id)->first();
             $llamada->state = 3;
             $llamada->devolucion_n_efectiva = true;
             $llamada->save();
 
             $date = Carbon::now();
             $Historial = new historialLLamadas();
-            $Historial->id_llamada = $res->id_llamada;
+            $Historial->id_llamada = $llamada->id;
             $Historial->id_usuario = $res->user_id; 
             $Historial->devolucion_n_efectiva = true; 
             $Historial->fecha  = $date->format('Y-m-d');
@@ -174,7 +165,7 @@ class LlamadasController extends Controller
     }
 
     public function changeState(Request $res){
-        $llamada = Llamadas::where('id_llamada', $res->id_llamada)->first();
+        $llamada = Llamadas::where('id', $res->id)->first();
         $llamada->state = 3;
         $llamada->devolucion_n_efectiva = true;
         $llamada->save();
@@ -189,7 +180,7 @@ class LlamadasController extends Controller
 
         $date = Carbon::now();
         $Historial = new historialLLamadas();
-        $Historial->id_llamada = $res->id_llamada;
+        $Historial->id_llamada = $llamada->id;
         $Historial->id_usuario = $res->user_id; 
         $Historial->devolucion_n_efectiva = true; 
         $Historial->fecha  = $date->format('Y-m-d');

@@ -32,6 +32,26 @@ class ColaController extends Controller
         return $cola;
     }
 
+    public function updateCola(Request $res){
+        $res->validate([
+            'cola' => 'required',
+            'clid' => 'required'
+        ]);
+        $cola =  Cola::find($res->id);
+        $cola->cola = $res->cola;
+        $cola->clid = $res->clid;
+        $cola->save();
+        return $cola;
+    }
+
+    public function deleteCola(Request $res){
+       
+        $cola =  Cola::find($res->cola_id);
+        $cola->delete();
+        return $cola;
+    }
+
+
 
     public function ListadoAdmin(Request $request){
         $columns = ['id'];
