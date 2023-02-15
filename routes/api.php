@@ -30,6 +30,10 @@ Route::group(['middleware' => 'cors'], function () {
     
     Route::prefix('cola')->group(function(){  // rutas de las colas o departamentos 
      Route::post('/lista', 'ColaController@Listado');
+     Route::post('/listado/admin', 'ColaController@ListadoAdmin');
+     Route::post('/create', 'ColaController@Create');
+     Route::post('/estadisticas', 'ColaController@estadisticasCola');
+     
     });
     
     Route::prefix('llamadas')->group(function(){  /// listado de las llamadas
@@ -39,9 +43,11 @@ Route::group(['middleware' => 'cors'], function () {
      Route::post('/create/log', 'LlamadasController@createLog');
      Route::post('/change/state', 'LlamadasController@changeState');
      Route::post('/pendiente/count', 'LlamadasController@Pendientes');
+    });
 
-     
-
+    Route::prefix('user')->group(function(){
+        Route::post('/listado', 'UserController@Listado');
+        Route::post('/create', 'UserController@createUser');
     });
     
     
