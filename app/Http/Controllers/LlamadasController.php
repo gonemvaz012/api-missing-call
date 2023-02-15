@@ -9,7 +9,13 @@ use Carbon\Carbon;
 use App\historialLLamadas;
 
 class LlamadasController extends Controller
-{
+{   
+
+    public function Pendientes(){
+        return Llamadas::where('state', 1)->get();
+    }
+
+    
     public function Listado(Request $request){
         $columns = ['id'];
         $length = $request->length;
@@ -101,9 +107,28 @@ class LlamadasController extends Controller
         $activy = new comentariosLlamadas();
         $activy->id_llamada = $res->id_llamada;
         $activy->comentario = $res->comentario;
+        if($res->completa){
+            $activy->active = true;
+        }
         $activy->id_usuario = $res->user_id;
         $activy->type = 1;
         $activy->save();
+
+        if($res->completa){
+            $llamada = Llamadas::where('id_llamada', $res->id_llamada)->first();
+            $llamada->state = 3;
+            $llamada->devolucion_n_efectiva = true;
+            $llamada->save();
+
+            $date = Carbon::now();
+            $Historial = new historialLLamadas();
+            $Historial->id_llamada = $res->id_llamada;
+            $Historial->id_usuario = $res->user_id; 
+            $Historial->devolucion_n_efectiva = true; 
+            $Historial->fecha  = $date->format('Y-m-d');
+            $Historial->hora  = $date->format('H:mm:ss A');
+            $Historial->save();
+        }
 
         return response()->json(['state' => true, 'data' => $activy]);
     }
@@ -118,8 +143,32 @@ class LlamadasController extends Controller
         $activy = new comentariosLlamadas();
         $activy->id_llamada = $res->id_llamada;
         $activy->id_usuario = $res->user_id;
+        if($res->completa){
+            $activy->active = true;
+        }
+        if($res->comentario){
+            $activy->comentario = $res->comentario;
+        }
+        
         $activy->type = 2;
         $activy->save();
+
+        if($res->completa){
+            $llamada = Llamadas::where('id_llamada', $res->id_llamada)->first();
+            $llamada->state = 3;
+            $llamada->devolucion_n_efectiva = true;
+            $llamada->save();
+
+            $date = Carbon::now();
+            $Historial = new historialLLamadas();
+            $Historial->id_llamada = $res->id_llamada;
+            $Historial->id_usuario = $res->user_id; 
+            $Historial->devolucion_n_efectiva = true; 
+            $Historial->fecha  = $date->format('Y-m-d');
+            $Historial->hora  = $date->format('H:mm:ss A');
+            $Historial->save();
+        }
+
 
         return response()->json(['state' => true, 'data' => $activy]);
     }

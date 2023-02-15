@@ -18,6 +18,7 @@ class CreateComentariosLlamadasTable extends Migration
             $table->text('comentario')->nullable();
             $table->string('id_llamada')->nullable();
             $table->string('id_usuario')->nullable();
+            $table->boolean('active')->default(0);
             $table->string('type')->nullable();
             $table->timestamps();
         });

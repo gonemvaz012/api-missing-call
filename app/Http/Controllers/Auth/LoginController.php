@@ -28,10 +28,10 @@ class LoginController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('guest')->except('logout');
+    // }
 
 
     public function login(Request $request)
@@ -97,6 +97,20 @@ class LoginController extends Controller
 
 
     }
+
+    public function logoutUser(Request $request)
+    {
+
+        return true;
+
+        // $request->user()->token()->revoke();
+        // return response()->json([
+        //     'ok' => true,
+        //     'data' => 'Salió exitosamente'
+        // ]);
+    }
+
+
 
     
 }
