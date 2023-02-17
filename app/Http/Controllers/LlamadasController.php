@@ -96,7 +96,7 @@ class LlamadasController extends Controller
     // create comentarios 
     public function createCommets(Request $res){
         $activy = new comentariosLlamadas();
-        $activy->id_llamada = $res->id_llamada;
+        $activy->id_llamada = $res->id;
         $activy->comentario = $res->comentario;
         if($res->completa){
             $activy->active = true;
@@ -132,7 +132,7 @@ class LlamadasController extends Controller
 
 
         $activy = new comentariosLlamadas();
-        $activy->id_llamada = $res->id_llamada;
+        $activy->id_llamada = $res->id;
         $activy->id_usuario = $res->user_id;
         if($res->completa){
             $activy->active = true;
