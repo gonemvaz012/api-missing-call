@@ -16,7 +16,7 @@ class LlamadasController extends Controller
     public function LlamadasCount(){
        
        $todas =  Llamadas::count();
-       $pendientes =  Llamadas::where('estado_tramitacion', 'No atendidas')->count();
+       $pendientes =  Llamadas::where('estado_tramitacion', 'No atendida')->count();
        $tramitandose =  Llamadas::where('estado_tramitacion', 'Tramitandose')->count();
        $completadas =  Llamadas::where('estado_tramitacion', 'Completada')->count();
        return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas ]);
