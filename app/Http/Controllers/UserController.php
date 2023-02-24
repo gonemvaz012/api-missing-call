@@ -88,6 +88,31 @@ class UserController extends Controller
 
 
 
+    // EXAMPLE CREARE USER TEST 
+
+    public function createUserExample(){
+        $user = new User([ // Creacion del suario
+            'name'     => 'Alexis Carvajal',
+            'usuario' => 'alexisjcr7',
+            'password' => bcrypt('test'),
+            'type' => 'user',
+            'extension' => '0001'
+        ]);
+        $user->save();
+        $user = new User([ // Creacion del suario
+            'name'     => 'Administrador',
+            'usuario' => 'admin',
+            'password' => bcrypt('test'),
+            'type' => 'admin',
+            'extension' => '0001'
+        ]);
+        $user->save();
+    }
+
+
+
+
+
 
     
 }

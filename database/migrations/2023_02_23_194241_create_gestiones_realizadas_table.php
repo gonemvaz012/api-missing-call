@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHistorialLLamadasTable extends Migration
+class CreateGestionesRealizadasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,18 @@ class CreateHistorialLLamadasTable extends Migration
      */
     public function up()
     {
-        Schema::create('historial_l_lamadas', function (Blueprint $table) {
-            $table->id();
-            $table->string('id_gestion')->nullable();
-            $table->string('id_llamada')->nullable();
-            $table->string('id_usuario')->nullable();
-            $table->string('devolucion_n_efectiva')->nullable();
+        Schema::create('gestiones_realizadas', function (Blueprint $table) {
+            // $table->id();
+            $table->bigIncrements('id_gestion');
             $table->string('fecha')->nullable();
             $table->string('hora')->nullable();
+            $table->string('id_usuario')->nullable();
+            $table->text('comentarios')->nullable();
+            $table->string('devolucion_efectiva')->nullable();
+            $table->string('id_llamada_estado')->nullable();
             $table->timestamps();
+
+
         });
     }
 
@@ -32,6 +35,6 @@ class CreateHistorialLLamadasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('historial_l_lamadas');
+        Schema::dropIfExists('gestiones_realizadas');
     }
 }

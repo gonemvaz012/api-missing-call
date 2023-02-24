@@ -22,6 +22,9 @@ Route::group(['middleware' => 'cors'], function () {
         return $request->user();
     });
     
+    // Route::get('/example/create', 'UserController@createUserExample');
+
+    
 
     Route::get('/logout', 'Auth\LoginController@logoutUser');
     Route::post('/login/user', 'Auth\LoginController@login');
@@ -45,6 +48,13 @@ Route::group(['middleware' => 'cors'], function () {
      Route::post('/create/log', 'LlamadasController@createLog');
      Route::post('/change/state', 'LlamadasController@changeState');
      Route::post('/pendiente/count', 'LlamadasController@Pendientes');
+     
+
+    //  Rutas nuevas 
+    Route::post('/create/call', 'LlamadasController@llamadaSaliente');
+    Route::post('/count/calls', 'LlamadasController@LlamadasCount');
+    
+    
     });
 
     Route::prefix('user')->group(function(){

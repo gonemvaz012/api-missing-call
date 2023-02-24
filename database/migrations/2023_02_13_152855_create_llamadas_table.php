@@ -14,14 +14,15 @@ class CreateLlamadasTable extends Migration
     public function up()
     {
         Schema::create('llamadas', function (Blueprint $table) {
-            $table->id();
-            $table->string('id_llamada')->nullable();
+            // $table->id();
+            $table->bigIncrements('id_llamada_estado');
+            $table->string('id_llamada')->nullable(); 
             $table->string('cola')->nullable();
             $table->string('numero_llamante')->nullable();
             $table->string('fecha')->nullable();
             $table->string('hora')->nullable();
-            $table->string('state')->nullable();
-            $table->boolean('devolucion_n_efectiva')->default(0);
+            $table->string('estado')->nullable();
+            $table->string('estado_tramitacion')->nullable();
             $table->timestamps();
         });
     }
