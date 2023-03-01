@@ -33,8 +33,14 @@ class LlamadasController extends Controller
         $column = $request->column; //Index
         $dir = $request->dir;
         $searchValue = $request->search;
+
+        if($request->key){
+            $query = Llamadas::with('comentario.user')->with('cola')->orderBy($request->key, $request->order);
+        }else {
+            $query = Llamadas::with('comentario.user')->with('cola')->orderBy($columns[$column], $dir);
+        }
     
-        $query = Llamadas::with('comentario.user')->with('cola')->orderBy($columns[$column], $dir);
+        
     
         if ($request->filterCola && $request->filterCola != 0 ) {
             $query->where('cola', $request->filterCola);
