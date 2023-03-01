@@ -67,8 +67,7 @@ class LlamadasController extends Controller
     
         if ($searchValue) {
             $query->where(function ($query) use ($searchValue) {
-                $query->where('id_llamada', 'like', '%' . $searchValue . '%')
-                ->orWhere('id_llamada_estado', 'like', '%' . $searchValue . '%');
+                $query->where('numero_llamante', 'like', '%' . $searchValue . '%');
             });
         }
     
