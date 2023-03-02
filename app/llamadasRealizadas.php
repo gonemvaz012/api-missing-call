@@ -21,7 +21,7 @@ class llamadasRealizadas extends Model
         ];
 
         public function user(){
-            return $this->hasOne(User::class, 'id', 'id_usuario');
+            return $this->hasOne(User::class, 'id_usuario', 'id');
         }
-        
+
 }
