@@ -15,4 +15,8 @@ class gestionesRealizadas extends Model
         'devolucion_efectiva',
         'id_llamada_estado',
     ];
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'id_usuario');
+    }
+    
 }

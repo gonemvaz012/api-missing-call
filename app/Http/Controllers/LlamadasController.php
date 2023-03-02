@@ -16,9 +16,9 @@ class LlamadasController extends Controller
     public function LlamadasCount(){
        
        $todas =  Llamadas::count();
-       $pendientes =  Llamadas::where('estado_tramitacion', 'No atendida')->count();
-       $tramitandose =  Llamadas::where('estado_tramitacion', 'Tramitandose')->count();
-       $completadas =  Llamadas::where('estado_tramitacion', 'Completada')->count();
+       $pendientes =  Llamadas::where('estado', 'No Atendida')->where('estado_tramitacion', 'No atendida')->count();
+       $tramitandose =  Llamadas::where('estado', 'No Atendida')->where('estado_tramitacion', 'Tramitandose')->count();
+       $completadas =  Llamadas::where('estado', 'No Atendida')->where('estado_tramitacion', 'Completada')->count();
        return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas ]);
     }
 
@@ -35,9 +35,9 @@ class LlamadasController extends Controller
         $searchValue = $request->search;
 
         if($request->key){
-            $query = Llamadas::with('comentario.user')->with('cola')->orderBy($request->key, $request->order);
+            $query = Llamadas::where('estado','No Atendida')->with('realizadas.user')->with('comentario.user')->with('cola')->orderBy($request->key, $request->order);
         }else {
-            $query = Llamadas::with('comentario.user')->with('cola')->orderBy($columns[$column], $dir);
+            $query = Llamadas::where('estado','No Atendida')->with('realizadas.user')->with('comentario.user')->with('cola')->orderBy($columns[$column], $dir);
         }
     
         
@@ -46,7 +46,7 @@ class LlamadasController extends Controller
             $query->where('cola', $request->filterCola);
         }
         if ($request->menu && $request->menu != 0 ) {
-            $query->where('estado', $request->menu);
+            $query->where('estado_tramitacion', $request->menu);
         }
 
         if ($request->filterDate) {
@@ -78,85 +78,59 @@ class LlamadasController extends Controller
 
     // create comentarios 
     public function createCommets(Request $res){
-        $activy = new comentariosLlamadas();
-        $activy->id_llamada = $res->id;
-        $activy->comentario = $res->comentario;
-        if($res->completa){
-            $activy->active = true;
-        }
-        $activy->id_usuario = $res->user_id;
-        $activy->type = 1;
-        $activy->save();
+         // Guardaremos la gestion en proceso  
+         $date = Carbon::now();
+         $gestion = new gestionesRealizadas();
+         $gestion->fecha = $date->format('Y-m-d');
+         $gestion->hora = $date->format('H:mm:ss A');
+         $gestion->id_usuario = $res->user_id; 
+         $gestion->comentarios = $res->comentario;
+         $gestion->id_llamada_estado = $res->id;
+        //  Si la function recibe la llamada completa la valida y procesa los datos 
+         if($res->completa){
+            $gestion->devolucion_efectiva = true;
+           }
+        $gestion->save();
+        //  Si la function recibe la llamada completa la valida y procesa los datos 
 
+        $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
         if($res->completa){
-            $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
-            $llamada->estado = 'Completada';
             $llamada->estado_tramitacion = 'Completada';
             $llamada->save();
-
-            // Guardaremos la gestion en proceso  
-           $date = Carbon::now();
-           $gestion = new gestionesRealizadas();
-           $gestion->fecha = $date->format('Y-m-d');
-           $gestion->hora = $date->format('H:mm:ss A');
-           $gestion->id_usuario = $res->user_id; 
-           $gestion->comentarios = $res->comentario;
-           $gestion->devolucion_efectiva = true;
-           $gestion->id_llamada_estado = $res->id;
-           $gestion->save();
+        }else{
+            $llamada->estado_tramitacion = 'Tramitandose';
+            $llamada->save();
         }
-
-        return response()->json(['state' => true, 'data' => $activy]);
+        return response()->json(['state' => true, 'data' => $gestion]);
     }
 
     // Funcion para agregar un comentario despues de realizar la llamada
     public function createLog(Request $res){
-        // Buscamos la llamada por su id 
-        $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
-
-        // Agregamos una nueva accion con su respectivo comentario 
-        $activy = new comentariosLlamadas();
-        $activy->id_llamada = $res->id;
-        $activy->id_usuario = $res->user_id;
+        $update = llamadasRealizadas::where('id_llamada_estado', $res->id)->latest()->first();
+        $update->comentarios = $res->comentario;
         if($res->completa){
-            $activy->active = true;
-        }
-        if($res->comentario){
-            $activy->comentario = $res->comentario;
-        }
-        $activy->type = 2;  // tipo 2 representa una accion - no solo un comentario 
-        $activy->save();
+            $update->devolucion_efectiva = true;
+           }
+           $update->save();
          
-        // Si el agente envia la llamada como completada entonces se busca la llamada por la id para cambiarle el estado 
-        if($res->completa){
-            $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
-            $llamada->estado = 'Completada';
-            $llamada->estado_tramitacion = 'Completada';
-            $llamada->save();
-            
-           // Guardaremos la gestion en proceso  
-           $date = Carbon::now();
-           $gestion = new gestionesRealizadas();
-           $gestion->fecha = $date->format('Y-m-d');
-           $gestion->hora = $date->format('H:mm:ss A');
-           $gestion->id_usuario = $res->user_id; 
-           $gestion->comentarios = $res->comentario;
-           $gestion->devolucion_efectiva = true;
-           $gestion->id_llamada_estado = $res->id;
-           $gestion->save();
+         //  Si la function recibe la llamada completa la valida y procesa los datos 
+         $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
+         if($res->completa){
+             $llamada->estado_tramitacion = 'Completada';
+             $llamada->save();
+         }else{
+             $llamada->estado_tramitacion = 'Tramitandose';
+             $llamada->save();
+         }
 
 
-        }
-
-
-        return response()->json(['state' => true, 'data' => $activy]);
+        return response()->json(['state' => true, 'data' => $llamada]);
     }
 
     // FUNCIONES NUEVAS 
     // Guardar el registro de una nueva llamada 
     public function llamadaSaliente(Request $res){
         $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
-        $llamada->estado = 'Tramitandose';
         $llamada->estado_tramitacion = 'Tramitandose';
         $llamada->save();
 
@@ -168,18 +142,9 @@ class LlamadasController extends Controller
        $realizada->fecha  = $date->format('Y-m-d');
        $realizada->hora  = $date->format('H:mm:ss A');
        $realizada->id_usuario = $res->user_id;
-       $realizada->devolucion_efectiva = true;
        $realizada->id_llamada_estado = $res->id;
        $realizada->api_callid = $call_id;
        $realizada->api_result = $result;
        $realizada->save();
-
-       $activy = new comentariosLlamadas();
-        $activy->id_llamada = $res->id;
-        $activy->id_usuario = $res->user_id;
-        $activy->comentario = 'Api result';
-        $activy->type = 2;
-        $activy->save();
-
     }
 }
