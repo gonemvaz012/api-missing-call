@@ -14,7 +14,7 @@ class CreateColasTable extends Migration
     public function up()
     {
         Schema::create('colas', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('id_cola')->nullable();
             $table->string('cola')->nullable();
             $table->string('clid')->nullable();
