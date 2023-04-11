@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Api extends Model
 {
-    protected $fillable = ['token'];
+    protected $fillable = ['url', 'token'];
 }
