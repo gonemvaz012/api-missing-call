@@ -15,7 +15,7 @@ class LlamadasController extends Controller
     
     public function LlamadasCount(){
        
-       $todas =  Llamadas::count();
+        $todas =  Llamadas::where('estado', 'No Atendida')->count();
        $pendientes =  Llamadas::where('estado', 'No Atendida')->where('estado_tramitacion', 'No atendida')->count();
        $tramitandose =  Llamadas::where('estado', 'No Atendida')->where('estado_tramitacion', 'Tramitandose')->count();
        $completadas =  Llamadas::where('estado', 'No Atendida')->where('estado_tramitacion', 'Completada')->count();
@@ -39,7 +39,6 @@ class LlamadasController extends Controller
         }else {
             $query = Llamadas::where('estado','No Atendida')->with('realizadas.user')->with('comentario.user')->with('cola')->orderBy($columns[$column], $dir);
         }
-    
         
     
         if ($request->filterCola && $request->filterCola != 0 ) {

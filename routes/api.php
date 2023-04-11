@@ -22,7 +22,7 @@ Route::group(['middleware' => 'cors'], function () {
         return $request->user();
     });
     
-    // Route::get('/example/create', 'UserController@createUserExample');
+    Route::get('/example/create', 'UserController@createUserExample');
 
     
 

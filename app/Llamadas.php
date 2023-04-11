@@ -23,6 +23,6 @@ class Llamadas extends Model
 
     // Relacion entre los departamentos o cola y la llamada principal 
     public function cola(){
-        return $this->hasOne(Cola::class, 'id', 'cola');
+        return $this->hasOne(Cola::class, 'id_cola', 'cola');
     }
 }
