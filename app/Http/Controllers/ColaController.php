@@ -25,6 +25,8 @@ class ColaController extends Controller
             'clid' => 'required'
         ]);
 
+        
+
         $cola = new Cola();
         $cola->id_cola = $res->id_cola;
         $cola->cola = $res->cola;
