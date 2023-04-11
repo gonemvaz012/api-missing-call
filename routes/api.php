@@ -64,6 +64,9 @@ Route::group(['middleware' => 'cors'], function () {
         Route::post('/delete', 'UserController@deleteUser');
         
     });
+
+    Route::post('/create/api', 'ApiController@ApiCreate');
+    Route::post('/list/api', 'ApiController@listApi');
     
     
 });

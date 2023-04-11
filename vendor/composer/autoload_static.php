@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5
+class ComposerStaticInitfb85de662c32d77aef760514b3c0a9e3
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -562,6 +562,7 @@ class ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5
     );
 
     public static $classMap = array (
+        'App\\Api' => __DIR__ . '/../..' . '/app/Api.php',
         'App\\Cola' => __DIR__ . '/../..' . '/app/Cola.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
@@ -3081,12 +3082,23 @@ class ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5
         'League\\Flysystem\\Util\\MimeType' => __DIR__ . '/..' . '/league/flysystem/src/Util/MimeType.php',
         'League\\Flysystem\\Util\\StreamHasher' => __DIR__ . '/..' . '/league/flysystem/src/Util/StreamHasher.php',
         'League\\MimeTypeDetection\\EmptyExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/EmptyExtensionToMimeTypeMap.php',
+        'League\\MimeTypeDetection\\EmptyExtensionToMimeTypeMapTest' => __DIR__ . '/..' . '/league/mime-type-detection/src/EmptyExtensionToMimeTypeMapTest.php',
         'League\\MimeTypeDetection\\ExtensionMimeTypeDetector' => __DIR__ . '/..' . '/league/mime-type-detection/src/ExtensionMimeTypeDetector.php',
+        'League\\MimeTypeDetection\\ExtensionMimeTypeDetectorTest' => __DIR__ . '/..' . '/league/mime-type-detection/src/ExtensionMimeTypeDetectorTest.php',
         'League\\MimeTypeDetection\\ExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/ExtensionToMimeTypeMap.php',
         'League\\MimeTypeDetection\\FinfoMimeTypeDetector' => __DIR__ . '/..' . '/league/mime-type-detection/src/FinfoMimeTypeDetector.php',
+        'League\\MimeTypeDetection\\FinfoMimeTypeDetectorTest' => __DIR__ . '/..' . '/league/mime-type-detection/src/FinfoMimeTypeDetectorTest.php',
         'League\\MimeTypeDetection\\GeneratedExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/GeneratedExtensionToMimeTypeMap.php',
+        'League\\MimeTypeDetection\\GeneratedExtensionToMimeTypeMapTest' => __DIR__ . '/..' . '/league/mime-type-detection/src/GeneratedExtensionToMimeTypeMapTest.php',
+        'League\\MimeTypeDetection\\Generation\\CombinedMimeTypeProvider' => __DIR__ . '/..' . '/league/mime-type-detection/src/Generation/CombinedMimeTypeProvider.php',
+        'League\\MimeTypeDetection\\Generation\\ExtensionToMimeTypeMapGenerator' => __DIR__ . '/..' . '/league/mime-type-detection/src/Generation/ExtensionToMimeTypeMapGenerator.php',
+        'League\\MimeTypeDetection\\Generation\\FlysystemProvidedMimeTypeProvider' => __DIR__ . '/..' . '/league/mime-type-detection/src/Generation/FlysystemProvidedMimeTypeProvider.php',
+        'League\\MimeTypeDetection\\Generation\\JsHttpMimeDBMimeTypeProvider' => __DIR__ . '/..' . '/league/mime-type-detection/src/Generation/JsHttpMimeDBMimeTypeProvider.php',
+        'League\\MimeTypeDetection\\Generation\\MimeTypeForExtension' => __DIR__ . '/..' . '/league/mime-type-detection/src/Generation/MimeTypeForExtension.php',
+        'League\\MimeTypeDetection\\Generation\\MimeTypeProvider' => __DIR__ . '/..' . '/league/mime-type-detection/src/Generation/MimeTypeProvider.php',
         'League\\MimeTypeDetection\\MimeTypeDetector' => __DIR__ . '/..' . '/league/mime-type-detection/src/MimeTypeDetector.php',
         'League\\MimeTypeDetection\\OverridingExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/OverridingExtensionToMimeTypeMap.php',
+        'League\\MimeTypeDetection\\OverridingExtensionToMimeTypeMapTest' => __DIR__ . '/..' . '/league/mime-type-detection/src/OverridingExtensionToMimeTypeMapTest.php',
         'League\\OAuth2\\Server\\AuthorizationServer' => __DIR__ . '/..' . '/league/oauth2-server/src/AuthorizationServer.php',
         'League\\OAuth2\\Server\\AuthorizationValidators\\AuthorizationValidatorInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/AuthorizationValidators/AuthorizationValidatorInterface.php',
         'League\\OAuth2\\Server\\AuthorizationValidators\\BearerTokenValidator' => __DIR__ . '/..' . '/league/oauth2-server/src/AuthorizationValidators/BearerTokenValidator.php',
@@ -3153,24 +3165,44 @@ class ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5
         'League\\Uri\\Contracts\\UriException' => __DIR__ . '/..' . '/league/uri-interfaces/src/Contracts/UriException.php',
         'League\\Uri\\Contracts\\UriInterface' => __DIR__ . '/..' . '/league/uri-interfaces/src/Contracts/UriInterface.php',
         'League\\Uri\\Contracts\\UserInfoInterface' => __DIR__ . '/..' . '/league/uri-interfaces/src/Contracts/UserInfoInterface.php',
+        'League\\Uri\\DataTest' => __DIR__ . '/..' . '/league/uri/src/DataTest.php',
         'League\\Uri\\Exceptions\\FileinfoSupportMissing' => __DIR__ . '/..' . '/league/uri-interfaces/src/Exceptions/FileinfoSupportMissing.php',
         'League\\Uri\\Exceptions\\IdnSupportMissing' => __DIR__ . '/..' . '/league/uri-interfaces/src/Exceptions/IdnSupportMissing.php',
         'League\\Uri\\Exceptions\\IdnaConversionFailed' => __DIR__ . '/..' . '/league/uri-interfaces/src/Exceptions/IdnaConversionFailed.php',
         'League\\Uri\\Exceptions\\SyntaxError' => __DIR__ . '/..' . '/league/uri-interfaces/src/Exceptions/SyntaxError.php',
         'League\\Uri\\Exceptions\\TemplateCanNotBeExpanded' => __DIR__ . '/..' . '/league/uri/src/Exceptions/TemplateCanNotBeExpanded.php',
+        'League\\Uri\\FactoryTest' => __DIR__ . '/..' . '/league/uri/src/FactoryTest.php',
+        'League\\Uri\\FileTest' => __DIR__ . '/..' . '/league/uri/src/FileTest.php',
+        'League\\Uri\\FtpTest' => __DIR__ . '/..' . '/league/uri/src/FtpTest.php',
         'League\\Uri\\Http' => __DIR__ . '/..' . '/league/uri/src/Http.php',
         'League\\Uri\\HttpFactory' => __DIR__ . '/..' . '/league/uri/src/HttpFactory.php',
+        'League\\Uri\\HttpFactoryTest' => __DIR__ . '/..' . '/league/uri/src/HttpFactoryTest.php',
+        'League\\Uri\\HttpTest' => __DIR__ . '/..' . '/league/uri/src/HttpTest.php',
         'League\\Uri\\Idna\\Idna' => __DIR__ . '/..' . '/league/uri-interfaces/src/Idna/Idna.php',
         'League\\Uri\\Idna\\IdnaInfo' => __DIR__ . '/..' . '/league/uri-interfaces/src/Idna/IdnaInfo.php',
+        'League\\Uri\\Idna\\IdnaInfoTest' => __DIR__ . '/..' . '/league/uri-interfaces/src/Idna/IdnaInfoTest.php',
+        'League\\Uri\\Idna\\IdnaTest' => __DIR__ . '/..' . '/league/uri-interfaces/src/Idna/IdnaTest.php',
+        'League\\Uri\\RelativizerTest' => __DIR__ . '/..' . '/league/uri/src/RelativizerTest.php',
+        'League\\Uri\\ResolverTest' => __DIR__ . '/..' . '/league/uri/src/ResolverTest.php',
         'League\\Uri\\Uri' => __DIR__ . '/..' . '/league/uri/src/Uri.php',
         'League\\Uri\\UriInfo' => __DIR__ . '/..' . '/league/uri/src/UriInfo.php',
+        'League\\Uri\\UriInfoTest' => __DIR__ . '/..' . '/league/uri/src/UriInfoTest.php',
+        'League\\Uri\\UriPsr7IntegrationTest' => __DIR__ . '/..' . '/league/uri/src/UriPsr7IntegrationTest.php',
         'League\\Uri\\UriResolver' => __DIR__ . '/..' . '/league/uri/src/UriResolver.php',
         'League\\Uri\\UriString' => __DIR__ . '/..' . '/league/uri/src/UriString.php',
+        'League\\Uri\\UriStringTest' => __DIR__ . '/..' . '/league/uri/src/UriStringTest.php',
         'League\\Uri\\UriTemplate' => __DIR__ . '/..' . '/league/uri/src/UriTemplate.php',
+        'League\\Uri\\UriTemplateTest' => __DIR__ . '/..' . '/league/uri/src/UriTemplateTest.php',
         'League\\Uri\\UriTemplate\\Expression' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/Expression.php',
+        'League\\Uri\\UriTemplate\\ExpressionTest' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/ExpressionTest.php',
         'League\\Uri\\UriTemplate\\Template' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/Template.php',
+        'League\\Uri\\UriTemplate\\TemplateTest' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/TemplateTest.php',
         'League\\Uri\\UriTemplate\\VarSpecifier' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/VarSpecifier.php',
+        'League\\Uri\\UriTemplate\\VarSpecifierTest' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/VarSpecifierTest.php',
         'League\\Uri\\UriTemplate\\VariableBag' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/VariableBag.php',
+        'League\\Uri\\UriTemplate\\VariableBagTest' => __DIR__ . '/..' . '/league/uri/src/UriTemplate/VariableBagTest.php',
+        'League\\Uri\\UriTest' => __DIR__ . '/..' . '/league/uri/src/UriTest.php',
+        'League\\Uri\\WsTest' => __DIR__ . '/..' . '/league/uri/src/WsTest.php',
         'Mockery' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegration' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegration.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegrationAssertPostConditions' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegrationAssertPostConditions.php',
@@ -5287,6 +5319,7 @@ class ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5
         'Symfony\\Component\\String\\Inflector\\FrenchInflector' => __DIR__ . '/..' . '/symfony/string/Inflector/FrenchInflector.php',
         'Symfony\\Component\\String\\Inflector\\InflectorInterface' => __DIR__ . '/..' . '/symfony/string/Inflector/InflectorInterface.php',
         'Symfony\\Component\\String\\LazyString' => __DIR__ . '/..' . '/symfony/string/LazyString.php',
+        'Symfony\\Component\\String\\Resources\\WcswidthDataGenerator' => __DIR__ . '/..' . '/symfony/string/Resources/WcswidthDataGenerator.php',
         'Symfony\\Component\\String\\Slugger\\AsciiSlugger' => __DIR__ . '/..' . '/symfony/string/Slugger/AsciiSlugger.php',
         'Symfony\\Component\\String\\Slugger\\SluggerInterface' => __DIR__ . '/..' . '/symfony/string/Slugger/SluggerInterface.php',
         'Symfony\\Component\\String\\UnicodeString' => __DIR__ . '/..' . '/symfony/string/UnicodeString.php',
@@ -5540,10 +5573,10 @@ class ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit82bedbb21a81dac7016ab2a3723d5ec5::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitfb85de662c32d77aef760514b3c0a9e3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitfb85de662c32d77aef760514b3c0a9e3::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitfb85de662c32d77aef760514b3c0a9e3::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitfb85de662c32d77aef760514b3c0a9e3::$classMap;
 
         }, null, ClassLoader::class);
     }
