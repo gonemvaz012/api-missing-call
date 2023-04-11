@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
+Route::get('/php', function () {
+    return phpinfo();
+});
+
 Route::get('/', function () {
     return view('welcome');
 });

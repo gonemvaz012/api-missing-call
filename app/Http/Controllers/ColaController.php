@@ -20,11 +20,13 @@ class ColaController extends Controller
 
     public function Create(Request $res){
         $res->validate([
+            'id_cola' => 'required',
             'cola' => 'required',
             'clid' => 'required'
         ]);
 
         $cola = new Cola();
+        $cola->id_cola = $res->id_cola;
         $cola->cola = $res->cola;
         $cola->clid = $res->clid;
         $cola->save();
@@ -38,6 +40,7 @@ class ColaController extends Controller
             'clid' => 'required'
         ]);
         $cola =  Cola::find($res->id);
+        $cola->id_cola = $res->id_cola;
         $cola->cola = $res->cola;
         $cola->clid = $res->clid;
         $cola->save();
@@ -63,7 +66,7 @@ class ColaController extends Controller
     
         if ($searchValue) {
             $query->where(function ($query) use ($searchValue) {
-                $query->where('id', 'like', '%' . $searchValue . '%')
+                $query->where('id_cola', 'like', '%' . $searchValue . '%')
                      ->orWhere('cola', 'like', '%' . $searchValue . '%')
                     ->orWhere('created_at', 'like', '%' . $searchValue . '%');
             });

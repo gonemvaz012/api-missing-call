@@ -87,22 +87,22 @@ class LoginController extends Controller
 
         // $user = new User([ // Creacion del suario
         //     'name'     => 'Administrador',
-        //     'usuario' => 'admin',
-        //     'email'    => 'administrador@missingcall.com',
-        //     'password' => bcrypt('missingcalladmin'),
-        //     'type' => 'user'
+        //     'usuario' => 'administrador',
+        //     'email'    => 'root@missingcall.com',
+        //     'password' => bcrypt('root'),
+        //     'type' => 'admin'
         // ]);
         // $user->save();
 
 
-        $user = new User([ // Creacion del suario
-            'name'     => 'Alberto Romario',
-            'usuario' => 'alberto',
-            'email'    => 'alberto@missingcall.com',
-            'password' => bcrypt('test'),
-            'type' => 'user'
-        ]);
-        $user->save();
+        // $user = new User([ // Creacion del suario
+        //     'name'     => 'Alberto Romario',
+        //     'usuario' => 'alberto',
+        //     'email'    => 'alberto@missingcall.com',
+        //     'password' => bcrypt('test'),
+        //     'type' => 'user'
+        // ]);
+        // $user->save();
 
 
 
