@@ -10,6 +10,9 @@ use Illuminate\Support\Str;
 use App\llamadasRealizadas;
 use App\gestionesRealizadas;
 use Illuminate\Support\Facades\Http;
+use App\User;
+use App\Cola;
+
 
 class LlamadasController extends Controller
 {   
@@ -130,15 +133,24 @@ class LlamadasController extends Controller
     // FUNCIONES NUEVAS 
     // Guardar el registro de una nueva llamada 
     public function llamadaSaliente(Request $res){
+
+       
+
+        $user = User::find($res->user_id);
+        $cola = Cola::where('clid', $res->clid)->first();
+        
+
+        return response()->json(['user' => $user, 'cola' => $cola]);
         
         $formulario = [
-            'num_extension' => $res->extension,
+            // 'num_extension' => $res->extension,
             'num_llamante' => $res->numero_llamante,
-            'clid' => $res->clid,
+            // 'clid' => $res->clid,
         ];
 
         $response  = Http::withHeaders([
-            'Authorization' => $res->token,
+            'username' => $user->userpbx,
+            'password' => $user->passwordpbx,
         ])->post($res->url, $formulario);
         
         $datos =  $response->json();

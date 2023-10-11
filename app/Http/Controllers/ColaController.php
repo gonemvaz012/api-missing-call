@@ -22,7 +22,8 @@ class ColaController extends Controller
         $res->validate([
             'id_cola' => 'required',
             'cola' => 'required',
-            'clid' => 'required'
+            'clid' => 'required',
+            'prefijo' => 'required',
         ]);
 
         
@@ -31,6 +32,7 @@ class ColaController extends Controller
         $cola->id_cola = $res->id_cola;
         $cola->cola = $res->cola;
         $cola->clid = $res->clid;
+        $cola->prefijo = $res->prefijo;
         $cola->save();
 
         return $cola;
@@ -39,12 +41,14 @@ class ColaController extends Controller
     public function updateCola(Request $res){
         $res->validate([
             'cola' => 'required',
-            'clid' => 'required'
+            'clid' => 'required',
+            'prefijo' => 'required',
         ]);
         $cola =  Cola::find($res->id);
         $cola->id_cola = $res->id_cola;
         $cola->cola = $res->cola;
         $cola->clid = $res->clid;
+        $cola->prefijo = $res->prefijo;
         $cola->save();
         return $cola;
     }
@@ -70,6 +74,7 @@ class ColaController extends Controller
             $query->where(function ($query) use ($searchValue) {
                 $query->where('id_cola', 'like', '%' . $searchValue . '%')
                      ->orWhere('cola', 'like', '%' . $searchValue . '%')
+                     ->orWhere('prefijo', 'like', '%' . $searchValue . '%')
                     ->orWhere('created_at', 'like', '%' . $searchValue . '%');
             });
         }

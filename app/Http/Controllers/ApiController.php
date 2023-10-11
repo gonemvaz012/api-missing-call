@@ -13,7 +13,6 @@ class ApiController extends Controller
     
     public function LlamadasApi(Request $res){
 
-
         $formulario = [
             'num_extension' => $res->extension,
             'num_llamante' => $res->numero_llamante,

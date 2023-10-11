@@ -43,6 +43,8 @@ class UserController extends Controller
         $res->validate([
             'nombre' => 'required',
             'password' => 'required',
+            'userpbx' => 'required',
+            'passwordpbx' => 'required',
             'usuario' => 'required|unique:users'
         ]);
 
@@ -51,7 +53,9 @@ class UserController extends Controller
             'usuario' => $res->usuario,
             'password' => bcrypt($res->password),
             'type' => 'user',
-            'extension' => $res->extension
+            'extension' => $res->extension,
+            'userpbx' => $res->userpbx,
+            'passwordpbx' => $res->passwordpbx,
         ]);
         $user->save();
 
@@ -64,6 +68,8 @@ class UserController extends Controller
     public function updateUser(Request $res){
         $res->validate([
             'name' => 'required',
+            'userpbx' => 'required',
+            'passwordpbx' => 'required',
             'usuario' => 'required|unique:users,usuario,' . $res->id
         ]);
 
@@ -75,6 +81,8 @@ class UserController extends Controller
             }
           $user->type = 'user';
             $user->extension = $res->extension;
+            $user->userpbx = $res->userpbx;
+            $user->passwordpbx = $res->passwordpbx;
         $user->save();
 
 

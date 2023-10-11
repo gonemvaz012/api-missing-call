@@ -21,6 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique()->nullable();
             $table->string('usuario')->nullable();
             $table->string('extension')->nullable();
+            $table->string('userpbx')->nullable();
+            $table->string('passwordpbx')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('type', ['admin','user'])->default('user');
             $table->string('password');

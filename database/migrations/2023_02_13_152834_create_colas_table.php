@@ -18,6 +18,7 @@ class CreateColasTable extends Migration
             $table->string('id_cola')->nullable();
             $table->string('cola')->nullable();
             $table->string('clid')->nullable();
+            $table->string('prefijo')->nullable();
 
             $table->timestamps();
         });
