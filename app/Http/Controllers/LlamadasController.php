@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\llamadasRealizadas;
 use App\gestionesRealizadas;
+use Illuminate\Support\Facades\Http;
 
 class LlamadasController extends Controller
 {   
@@ -81,7 +82,7 @@ class LlamadasController extends Controller
          $date = Carbon::now();
          $gestion = new gestionesRealizadas();
          $gestion->fecha = $date->format('Y-m-d');
-         $gestion->hora = $date->format('H:mm:ss A');
+         $gestion->hora = $date;
          $gestion->id_usuario = $res->user_id; 
          $gestion->comentarios = $res->comentario;
          $gestion->id_llamada_estado = $res->id;
@@ -129,21 +130,32 @@ class LlamadasController extends Controller
     // FUNCIONES NUEVAS 
     // Guardar el registro de una nueva llamada 
     public function llamadaSaliente(Request $res){
+        
+        $formulario = [
+            'num_extension' => $res->extension,
+            'num_llamante' => $res->numero_llamante,
+            'clid' => $res->clid,
+        ];
+
+        $response  = Http::withHeaders([
+            'Authorization' => $res->token,
+        ])->post($res->url, $formulario);
+        
+        $datos =  $response->json();
+
+
         $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
         $llamada->estado_tramitacion = 'Tramitandose';
         $llamada->save();
-
-       $call_id = Str::random(20);
-       $result = true;
-
+     
        $date = Carbon::now();
        $realizada = new llamadasRealizadas();
        $realizada->fecha  = $date->format('Y-m-d');
-       $realizada->hora  = $date->format('H:mm:ss A');
+       $realizada->hora  = $date;
        $realizada->id_usuario = $res->user_id;
        $realizada->id_llamada_estado = $res->id;
-       $realizada->api_callid = $call_id;
-       $realizada->api_result = $result;
+       $realizada->api_callid = $datos['apicallid'];
+       $realizada->api_result = $datos['apiresult'];
        $realizada->save();
     }
 }

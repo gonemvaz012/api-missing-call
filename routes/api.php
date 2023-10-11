@@ -28,7 +28,8 @@ Route::group(['middleware' => 'cors'], function () {
 
     Route::get('/logout', 'Auth\LoginController@logoutUser');
     Route::post('/login/user', 'Auth\LoginController@login');
-    Route::get('/create/default', 'Auth\LoginController@createAdmin');
+    // Route::get('/create/default', 'Auth\LoginController@createAdmin');
+    Route::post('/example/server', 'ApiController@LlamadasApi');
     
     
     Route::prefix('cola')->group(function(){  // rutas de las colas o departamentos 
