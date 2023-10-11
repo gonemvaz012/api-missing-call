@@ -138,13 +138,12 @@ class LlamadasController extends Controller
 
         $user = User::find($res->user_id);
         $cola = Cola::where('clid', $res->clid)->first();
-        
 
         return response()->json(['user' => $user, 'cola' => $cola]);
         
         $formulario = [
             // 'num_extension' => $res->extension,
-            'num_llamante' => $res->numero_llamante,
+            'num_llamante' => $cola->prefijo . $res->numero_llamante,
             // 'clid' => $res->clid,
         ];
 
