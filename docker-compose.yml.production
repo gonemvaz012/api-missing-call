@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api_missing_call
-    env_file: .env
+    env_file: stack.env
     ports:
       - $PHP_LOCAL_PORT:$PHP_DOCKER_PORT
     volumes:
@@ -19,7 +19,7 @@ services:
   myadmin:
     image: phpmyadmin
     container_name: phpmyadmin_api_missing_call
-    env_file: .env
+    env_file: stack.env
     restart: always
     environment:
       PMA_HOST: db
@@ -34,7 +34,7 @@ services:
   db:
     container_name: mysql_api_missing_call
     image: mysql:latest
-    env_file: .env
+    env_file: stack.env
     platform: linux/x86_64
     restart: always
     ports:
