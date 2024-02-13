@@ -40,7 +40,8 @@ COPY . .
 RUN composer install
 
 # Expone el puerto 8002
-EXPOSE 8002
+ENV PHP_LOCAL_PORT=$PHP_LOCAL_PORT
+EXPOSE $PHP_LOCAL_PORT
 
 # Comando para iniciar el servidor de desarrollo en el puerto 8002
-CMD php artisan serve --host=0.0.0.0 --port=8002
+CMD php artisan serve --host=0.0.0.0 --port=$PHP_LOCAL_PORT
