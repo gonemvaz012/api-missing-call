@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api_missing_call
+    command: php artisan serve --host=0.0.0.0 --port=$PHP_LOCAL_PORT
     env_file: stack.env
     ports:
       - $PHP_LOCAL_PORT:$PHP_DOCKER_PORT
