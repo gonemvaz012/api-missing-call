@@ -3,13 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: api_missing_call
     command: php artisan serve --host=0.0.0.0 --port=$PHP_LOCAL_PORT
+    container_name: missing_call_api
     env_file: stack.env
     ports:
       - $PHP_LOCAL_PORT:$PHP_DOCKER_PORT
     volumes:
-      - .:/var/www
+      - www:/var/www
     depends_on:
       - db
     links:
@@ -19,7 +19,7 @@ services:
 
   myadmin:
     image: phpmyadmin
-    container_name: phpmyadmin_api_missing_call
+    container_name: api_missing_call_phpmyadmin
     env_file: stack.env
     restart: always
     environment:
@@ -33,7 +33,7 @@ services:
       - nginxproxymanager_default
 
   db:
-    container_name: mysql_api_missing_call
+    container_name: api_missing_call_mysql
     image: mysql:latest
     env_file: stack.env
     platform: linux/x86_64
@@ -44,7 +44,7 @@ services:
       - nginxproxymanager_default
 
 volumes:
-  pgdata:
+  www:
 networks:
   nginxproxymanager_default:
     external: true
