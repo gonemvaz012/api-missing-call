@@ -89,7 +89,7 @@ class VerificarTareaProgramada extends Command
                 $llamadaAnterior->save();
             }
 
-            Mail::to('djalexisjc2016@gmail.com')->send(new avisoUrgente($ultimaLlamada, $configuracion));
+            Mail::to($configuracion->email)->send(new avisoUrgente($ultimaLlamada, $configuracion));
         }
     } else {
         \Log::info('vacio');
