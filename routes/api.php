@@ -68,6 +68,13 @@ Route::group(['middleware' => 'cors'], function () {
 
     Route::post('/create/api', 'ApiController@ApiCreate');
     Route::post('/list/api', 'ApiController@listApi');
+
+
+    // Rutas de las configuraciones  
+    Route::post('/get/configuracion', 'ConfiguracionController@getConfiguracion');
+    Route::post('/guardar/configuracion', 'ConfiguracionController@guadarConfiguracion');
+
+    Route::get('/example/llamadas', 'LlamadasController@Example');
     
     
 });
