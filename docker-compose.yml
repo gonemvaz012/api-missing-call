@@ -40,11 +40,14 @@ services:
     restart: always
     ports:
       - $DB_PORT:$DB_PORT
+    volumes:
+      - db:/var/lib/mysql
     networks:
       - nginxproxymanager_default
 
 volumes:
   www:
+  db:
 networks:
   nginxproxymanager_default:
     external: true
