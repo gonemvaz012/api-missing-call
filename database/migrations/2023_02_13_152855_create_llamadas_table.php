@@ -23,6 +23,8 @@ class CreateLlamadasTable extends Migration
             $table->string('hora')->nullable();
             $table->string('estado')->nullable();
             $table->string('estado_tramitacion')->nullable();
+            $table->string('grupo_id')->nullable();
+            $table->boolean('no_visible')->default(0);
             $table->timestamps();
         });
     }

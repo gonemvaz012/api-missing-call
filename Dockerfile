@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libwebp-dev \
-    libzip-dev
+    libzip-dev \
+    cron
 
 # Install PDO extensions
 RUN docker-php-ext-install pdo_mysql pdo_pgsql
@@ -38,6 +39,12 @@ COPY . .
 
 # Instala las dependencias de Composer
 RUN composer install
+
+# Añade la configuración del cron
+COPY crontab /etc/cron.d/laravel-cron
+RUN chmod 0644 /etc/cron.d/laravel-cron
+RUN crontab /etc/cron.d/laravel-cron
+
 
 # Expone el puerto 8002
 ENV PHP_LOCAL_PORT=$PHP_LOCAL_PORT
