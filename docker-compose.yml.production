@@ -43,6 +43,7 @@ services:
     networks:
       - nginxproxymanager_default
 
+
 volumes:
   www:
 networks:
