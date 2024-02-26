@@ -226,37 +226,41 @@ class LlamadasController extends Controller
     // Guardar el registro de una nueva llamada 
     public function llamadaSaliente(Request $res){
 
-       
-
         $user = User::find($res->user_id);
         $cola = Cola::where('clid', $res->clid)->first();
-        
-        $formulario = [
-            // 'num_extension' => $res->extension,
-            'num_llamante' => $cola->prefijo . $res->numero_llamante,
-            // 'clid' => $res->clid,
-        ];
-
-        $response  = Http::withHeaders([
-            'username' => $user->userpbx,
-            'password' => $user->passwordpbx,
-        ])->post($res->url, $formulario);
-        
-        $datos =  $response->json();
 
 
         $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
         $llamada->estado_tramitacion = 'Tramitandose';
         $llamada->save();
      
-       $date = Carbon::now();
-       $realizada = new llamadasRealizadas();
-       $realizada->fecha  = $date->format('Y-m-d');
-       $realizada->hora  = $date;
-       $realizada->id_usuario = $res->user_id;
-       $realizada->id_llamada_estado = $res->id;
-       $realizada->api_callid = $datos['apicallid'];
-       $realizada->api_result = $datos['apiresult'];
-       $realizada->save();
+        $date = Carbon::now();
+
+        $realizada = new llamadasRealizadas();
+        $realizada->fecha  = $date->format('Y-m-d');
+        $realizada->hora  = $date;
+        $realizada->id_usuario = $res->user_id;
+        $realizada->id_llamada_estado = $res->id;
+        //    $realizada->api_callid = $datos['apicallid'];
+        //    $realizada->api_result = $datos['apiresult'];
+        $realizada->save();
+
+       if($realizada){
+
+            $formulario = [
+                'idCallRegister' => $realizada->id,
+                'prefijo' => $cola->prefijo,
+                'number' => $res->numero_llamante,
+                'extension' => $user->extension,
+                'password' => $user->passwordpbx,
+            ];
+            
+            $response = Http::withToken($request->token)
+            ->post($res->url .'/callbacks', $formulario);
+            
+            $datos = $response->json();
+
+            return $datos;
+       }
     }
 }
