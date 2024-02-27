@@ -248,7 +248,7 @@ class LlamadasController extends Controller
        if($realizada){
 
             $formulario = [
-                'idCallRegister' => $realizada->id,
+                'idCallRegister' => 'api'. $realizada->id,
                 'prefijo' => $cola->prefijo,
                 'number' => $res->numero_llamante,
                 'extension' => $user->extension,
