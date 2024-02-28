@@ -75,6 +75,13 @@ Route::group(['middleware' => 'cors'], function () {
     Route::post('/guardar/configuracion', 'ConfiguracionController@guadarConfiguracion');
 
     Route::get('/example/llamadas', 'LlamadasController@Example');
+
+
+
+    // RUTAS ENDPONT 
+
+    Route::post('/missed/call/log', 'ApiController@registerCall');
+    Route::post('/assign/call/log', 'ApiController@assignCall');
     
     
 });
