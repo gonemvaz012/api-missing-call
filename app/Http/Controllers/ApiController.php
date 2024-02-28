@@ -13,8 +13,7 @@ use App\llamadasRealizadas;
 
 class ApiController extends Controller
 {   
-
-//    -- -- - --   
+  
     public function assignCall(Request $request){
 
         $validator = Validator::make($request->all(), [
@@ -77,11 +76,6 @@ class ApiController extends Controller
         return response()->json(['status' => 200,'message' => 'Llamada registrada con éxito'], 200);
 
     }
-
-    // -------- 
-
-
-
 
     
     public function LlamadasApi(Request $res){
