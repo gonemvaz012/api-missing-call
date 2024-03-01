@@ -255,12 +255,12 @@ class LlamadasController extends Controller
                 'password' => $user->passwordpbx,
             ];
             
-            $response = Http::withToken($request->token)
-            ->post($res->url .'/callbacks', $formulario);
+            $response = Http::withToken($res->token)
+            ->post($res->url .'/callback', $formulario);
             
             $datos = $response->json();
 
-            return $datos;
+            return response()->json(['datos' => $datos, 'state' => '000']);
        }
     }
 }
