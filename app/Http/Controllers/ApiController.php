@@ -13,7 +13,6 @@ use App\llamadasRealizadas;
 
 class ApiController extends Controller
 {   
-
 //    -- -- - --   
     public function assignCall(Request $request){
 
@@ -78,14 +77,8 @@ class ApiController extends Controller
 
     }
 
-<<<<<<< HEAD
-=======
     // -------- 
 
-
-
-
->>>>>>> main
     
     public function LlamadasApi(Request $res){
 
