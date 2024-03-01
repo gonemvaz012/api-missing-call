@@ -248,7 +248,7 @@ class LlamadasController extends Controller
        if($realizada){
 
             $formulario = [
-                'idCallRegister' => 'api'. $realizada->id,
+                'idCallRegister' => 'api'. $realizada->id_llamada_realizada,
                 'prefijo' => $cola->prefijo,
                 'number' => $res->numero_llamante,
                 'extension' => $user->extension,
@@ -261,7 +261,7 @@ class LlamadasController extends Controller
             
             $datos = $response->json();
 
-            $envioID = 'api'. $realizada->id;
+            $envioID = 'api'. $realizada->id_llamada_realizada;
 
             return response()->json(['datos' => $datos, 'state' => $envioID]);
        }
