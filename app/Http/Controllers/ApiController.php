@@ -26,8 +26,10 @@ class ApiController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
 
+        $numeroSinAPI = str_replace("api", "", $request->idCallRegister);
+        $numeroConvertido = (int)$numeroSinAPI;
 
-        $llamada = llamadasRealizadas::find($request->idCallRegister);
+        $llamada = llamadasRealizadas::find($numeroConvertido);
         if($llamada){
             $llamada->api_callid = $request->tag;
             $llamada->api_result = $request->result;
