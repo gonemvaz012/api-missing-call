@@ -1,1 +1,1 @@
-* * * * * root echo "$(date) Running scheduled tasks laravel" >> /var/log/cron.log && cd /var/www && /usr/local/bin/php artisan schedule:run >> /var/log/cron.log 2>&1
+* * * * * root echo "$(date) Running scheduled tasks laravel" >> /var/log/cron.log && cd /var/www && /usr/local/bin/php artisan schedule:run >> /var/log/cron.log 2>&1 && chmod 666 /var/log/cron.log
