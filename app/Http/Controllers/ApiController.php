@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use App\Llamadas;
 use Illuminate\Support\Facades\Validator;
 use App\llamadasRealizadas;
+use App\configuracion;
+use Carbon\Carbon;
 
 
 
@@ -74,6 +76,37 @@ class ApiController extends Controller
         $llamada->estado= 'No Atendida';
         $llamada->estado_tramitacion = 'No atendida';
         $llamada->save();
+
+
+        // Validamos si la persona llamo antes en el intervalo 
+        $config = configuracion::find(1);
+        // Calculamos la fecha mínima para buscar llamadas anteriores dentro del intervalo
+        $fechaMin = Carbon::now()->subMinutes($config->intervalo_min);
+
+        // Buscamos las llamadas anteriores dentro del intervalo de tiempo
+        $llamadaGroup = Llamadas::where('numero_llamante', $llamada->numero_llamante)
+            ->where('grupo_id', null)
+            ->where('created_at', '>=', $fechaMin)
+            ->where('created_at', '<=', $llamada->created_at)
+            ->get();
+
+        // Verificamos si la cantidad de llamadas anteriores dentro del intervalo alcanza el umbral
+        if ($llamadaGroup->count() >= $config->llamadas_intervalo) {
+            // La cantidad de llamadas dentro del intervalo alcanza limite requerido, hacer algo aquí
+            // Por ejemplo, puedes marcar la llamada actual como agrupacion
+             // Actualizar el campo 'no_visible' para las llamadas anteriores
+            foreach ($llamadaGroup as $llamadaAnterior) {
+                $llamadaAnterior->no_visible = true;
+                $llamadaAnterior->grupo_id = $llamada->id_llamada_estado;
+                $llamadaAnterior->save();
+            }
+
+            $llamada->no_visible = false;
+           
+        }
+        $llamada->save();
+        // return $llamadaGroup;
+
 
         return response()->json(['status' => 200,'message' => 'Llamada registrada con éxito'], 200);
 

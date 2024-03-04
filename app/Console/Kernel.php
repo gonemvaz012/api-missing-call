@@ -29,6 +29,9 @@ class Kernel extends ConsoleKernel
 
      protected function schedule(Schedule $schedule)
      {
+
+        return true;
+
          $configuracion = configuracion::find(1);
      
          if ($configuracion && $configuracion->state && $configuracion->intervalo_min) {
@@ -41,7 +44,7 @@ class Kernel extends ConsoleKernel
                  // Verificar si la hora actual está en un múltiplo del intervalo
                  if ($horaActual->minute % $intervalo === 0) {
                      // Ejecutar tu tarea programada aquí...
-                     \Artisan::call('verificar');
+                    //  \Artisan::call('verificar');
                       
                      \Log::info("Tarea programada verificada. Intervalo: $intervalo minutos. Hora: " . $horaActual->format('H:i'));
                  } else {

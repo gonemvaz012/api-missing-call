@@ -43,6 +43,7 @@ class VerificarTareaProgramada extends Command
      */
     public function handle()
 {
+    return true;
     // Obtener la configuración
     $configuracion = configuracion::find(1);
     
@@ -53,9 +54,14 @@ class VerificarTareaProgramada extends Command
     $horaActual = Carbon::now();
     $horaInicioRango = $horaActual->copy()->subMinutes($intervalo); // Retroceder el intervalo
 
+    \Log::info($horaInicioRango . ' ' . ' hora Inicio Rango');
+
     // Consulta para obtener las llamadas dentro del rango de tiempo
     $llamadas = Llamadas::whereBetween('created_at', [$horaInicioRango, $horaActual])
         ->get();
+
+    \Log::info($horaActual . ' ' . ' Hora actual');
+    \Log::info($llamadas . ' ' . ' Llamadas en rango');
 
     // Verificar si hay llamadas disponibles
     if ($llamadas->count() > 0) {
@@ -89,7 +95,7 @@ class VerificarTareaProgramada extends Command
                 $llamadaAnterior->save();
             }
 
-            Mail::to($configuracion->email)->send(new avisoUrgente($ultimaLlamada, $configuracion));
+            // Mail::to($configuracion->email)->send(new avisoUrgente($ultimaLlamada, $configuracion));
         }
     } else {
         \Log::info('vacio');
