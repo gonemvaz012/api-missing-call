@@ -8,7 +8,7 @@ services:
     ports:
       - ${PHP_LOCAL_PORT}:${PHP_DOCKER_PORT}
     volumes:
-      - .:/var/www
+      - www:/var/www
     depends_on:
       - db
     links:
@@ -30,39 +30,21 @@ services:
       - db:db
     networks:
       - nginxproxymanager_default
-
   db:
-    container_name: api_missing_call_mysql
-    image: mysql:latest
-    platform: linux/x86_64 
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD} 
-    ports:
-      - ${DB_PORT}:3306
-    networks:
-      - nginxproxymanager_default
-
-
-
-
-  # db:
-  #   container_name: api_missing_call_mysql
-  #   image: mysql:latest
-  #   env_file: .env
-  #   platform: linux/x86_64
-  #   restart: always
-  #   ports:
-  #     - $DB_PORT:$DB_PORT
-  #   volumes:
-  #     - db:/var/lib/mysql
-  #   networks:
-  #     - nginxproxymanager_default
+     container_name: api_missing_call_mysql
+     image: mysql:latest
+     env_file: stack.env
+     platform: linux/x86_64
+     restart: always
+     ports:
+       - $DB_PORT:$DB_PORT
+     volumes:
+       - db:/var/lib/mysql
+     networks:
+       - nginxproxymanager_default
 
 volumes:
+  www:
   db:
 networks:
   nginxproxymanager_default:
