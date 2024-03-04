@@ -25,7 +25,7 @@ services:
       PMA_HOST: db
       # MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - ${PHPMYADMIN_LOCAL_PORT}:${PHPMYADMIN_LOCAL_PORT}
+      - 8082:80
     links:
       - db:db
     networks:
