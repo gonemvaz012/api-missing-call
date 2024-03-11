@@ -17,7 +17,7 @@ class UserController extends Controller
         $dir = $request->dir;
         $searchValue = $request->search;
     
-        $query = User::where('type', 'user')->orderBy($columns[$column], $dir);
+        $query = User::where('type', 'user')->with('departamentos')->orderBy($columns[$column], $dir);
 
         if ($request->filterDate) {
             $desde = Carbon::create($request->filterDate[0])->subDay(1)->format('Y-m-d');

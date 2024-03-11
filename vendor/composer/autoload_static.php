@@ -602,6 +602,7 @@ class ComposerStaticInitfb85de662c32d77aef760514b3c0a9e3
         'App\\gestionesRealizadas' => __DIR__ . '/../..' . '/app/gestionesRealizadas.php',
         'App\\llamadasContestadas' => __DIR__ . '/../..' . '/app/llamadasContestadas.php',
         'App\\llamadasRealizadas' => __DIR__ . '/../..' . '/app/llamadasRealizadas.php',
+        'App\\userDepartamentos' => __DIR__ . '/../..' . '/app/userDepartamentos.php',
         'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Cors.php',
         'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/CorsService.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',

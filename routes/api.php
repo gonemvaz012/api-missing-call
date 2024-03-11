@@ -34,6 +34,7 @@ Route::group(['middleware' => 'cors'], function () {
     
     Route::prefix('cola')->group(function(){  // rutas de las colas o departamentos 
      Route::post('/lista', 'ColaController@Listado');
+     Route::post('/lista/asignadas', 'UserDepartamentosController@listaDepartamentosUser');
      Route::post('/listado/admin', 'ColaController@ListadoAdmin');
      Route::post('/create', 'ColaController@Create');
      Route::post('/estadisticas', 'ColaController@estadisticasCola');
@@ -63,6 +64,8 @@ Route::group(['middleware' => 'cors'], function () {
         Route::post('/create', 'UserController@createUser');
         Route::post('/update', 'UserController@updateUser');
         Route::post('/delete', 'UserController@deleteUser');
+        Route::post('/asignar/lista/colas', 'UserDepartamentosController@departamentosLista');
+        Route::post('/asignar/guardar/colas', 'UserDepartamentosController@guardarDepartamentos');
         
     });
 

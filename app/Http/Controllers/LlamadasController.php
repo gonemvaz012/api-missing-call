@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Http;
 use App\User;
 use App\Cola;
 use App\configuracion;
+use App\userDepartamentos;
+
 
 
 
@@ -68,16 +70,56 @@ class LlamadasController extends Controller
     
     }
 
-    public function LlamadasCount(){
-       
-       $todas =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->count();
-       $pendientes =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->where('estado_tramitacion', 'No atendida')->count();
-       $tramitandose =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->where('estado_tramitacion', 'Tramitandose')->count();
-       $completadas =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->where('estado_tramitacion', 'Completada')->count();
-       $urgentes =  Llamadas::whereNotNull('grupo_id')->where('grupo_id', '!=', '')->where('no_visible', 0)->count();
 
-       return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas, 'urgentes' => $urgentes ]);
-    }
+        public function LlamadasCount(Request $request){
+            // Obtén el ID del usuario autenticado (o el ID del usuario proporcionado en la solicitud, según sea necesario)
+            $userId = $request->user_id;
+        
+            // Obtén los IDs de los departamentos asignados al usuario
+            $departamentos = UserDepartamentos::where('user_id', $userId)
+            ->with('departamentos') // Carga la relación departamentos
+            ->get()
+            ->pluck('departamentos.id_cola'); // Pluck para obtener los IDs de los departamentos
+    
+        
+            // Inicializa las consultas de llamadas
+            $query = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
+        
+            // Cuenta las llamadas pendientes
+            $pendientes = $query->where('estado', 'No Atendida')->where('estado_tramitacion', 'No atendida')->count();
+        
+            // Inicializa una nueva consulta para contar las llamadas en proceso de trámite
+            $queryTramitandose = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
+            $tramitandose = $queryTramitandose->where('estado', 'No Atendida')->where('estado_tramitacion', 'Tramitandose')->count();
+        
+            // Inicializa una nueva consulta para contar las llamadas completadas
+            $queryCompletadas = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
+            $completadas = $queryCompletadas->where('estado', 'No Atendida')->where('estado_tramitacion', 'Completada')->count();
+        
+            // Cuenta todas las llamadas
+            $queryTodas = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
+            $todas = $queryTodas->where('estado', 'No Atendida')->count();
+        
+            // Cuenta las llamadas urgentes
+            $urgentes = Llamadas::whereNotNull('grupo_id')->where('grupo_id', '!=', '')->whereIn('cola', $departamentos)->count();
+        
+            // Devuelve la respuesta JSON con el recuento de llamadas
+            return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas, 'urgentes' => $urgentes ]);
+        }
+        
+
+
+    
+    // public function LlamadasCount(){
+       
+    //    $todas =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->count();
+    //    $pendientes =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->where('estado_tramitacion', 'No atendida')->count();
+    //    $tramitandose =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->where('estado_tramitacion', 'Tramitandose')->count();
+    //    $completadas =  Llamadas::where('estado', 'No Atendida')->where('no_visible', 0)->where('estado_tramitacion', 'Completada')->count();
+    //    $urgentes =  Llamadas::whereNotNull('grupo_id')->where('grupo_id', '!=', '')->where('no_visible', 0)->count();
+
+    //    return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas, 'urgentes' => $urgentes ]);
+    // }
 
     public function Pendientes(){
         return Llamadas::where('estado', 1)->get();
@@ -85,6 +127,8 @@ class LlamadasController extends Controller
 
     
     public function Listado(Request $request){
+
+
         $columns = ['id_llamada_estado'];
         $length = $request->length;
         $column = $request->column; //Index
@@ -105,6 +149,20 @@ class LlamadasController extends Controller
         if ($request->filterCola && $request->filterCola != 0 ) {
             $query->where('cola', $request->filterCola);
         }
+        // Si el usuario selecciona mostrar todos los departamentos
+        if (!$request->filterCola) {
+            
+            // Obtén los IDs de los departamentos asignados al usuario
+            $departamentos = UserDepartamentos::where('user_id', $request->user_id)
+            ->with('departamentos') // Carga la relación departamentos
+            ->get()
+            ->pluck('departamentos.id_cola'); // Pluck para obtener los IDs
+           
+            // Filtra por los departamentos asignados al usuario
+            $query->whereIn('cola', $departamentos);
+        }
+
+
         if ($request->menu && $request->menu != 0 ) {
             $query->where('estado_tramitacion', $request->menu);
         }
