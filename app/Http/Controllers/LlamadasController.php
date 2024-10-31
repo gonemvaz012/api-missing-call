@@ -311,7 +311,7 @@ class LlamadasController extends Controller
                 'password' => $user->passwordpbx,
             ];
 
-            \Log::info($formulario);
+            // \Log::info($formulario);
             
             
             $response = Http::withToken($res->token)
