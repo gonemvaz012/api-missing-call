@@ -299,8 +299,6 @@ class LlamadasController extends Controller
         $realizada->hora  = $date;
         $realizada->id_usuario = $res->user_id;
         $realizada->id_llamada_estado = $res->id;
-        //    $realizada->api_callid = $datos['apicallid'];
-        //    $realizada->api_result = $datos['apiresult'];
         $realizada->save();
 
        if($realizada){
@@ -312,6 +310,8 @@ class LlamadasController extends Controller
                 'extension' => $user->extension,
                 'password' => $user->passwordpbx,
             ];
+
+            \Log::info($formulario);
             
             
             $response = Http::withToken($res->token)
