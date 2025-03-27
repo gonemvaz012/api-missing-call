@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\LlamadasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,16 +46,16 @@ Route::group(['middleware' => 'cors'], function () {
     });
     
     Route::prefix('llamadas')->group(function(){  /// listado de las llamadas
-     Route::post('/lista', 'LlamadasController@Listado');
+     Route::post('/lista', [LlamadasController::class, 'Listado']);
      Route::post('/lista/completas', 'LlamadasController@ListadoCompletas');
      Route::post('/create/comment', 'LlamadasController@createCommets');
-     Route::post('/create/log', 'LlamadasController@createLog');
+     Route::post('/create/log', [LlamadasController::class, 'createLog']);
      Route::post('/change/state', 'LlamadasController@changeState');
      Route::post('/pendiente/count', 'LlamadasController@Pendientes');
      
 
     //  Rutas nuevas 
-    Route::post('/create/call', 'LlamadasController@llamadaSaliente');
+    Route::post('/create/call', [LlamadasController::class, 'llamadaSaliente']);
     Route::post('/count/calls', 'LlamadasController@LlamadasCount');
     
     
@@ -83,8 +85,8 @@ Route::group(['middleware' => 'cors'], function () {
 
     // RUTAS ENDPONT 
 
-    Route::post('/missed/call/log', 'ApiController@registerCall');
-    Route::post('/assign/call/log', 'ApiController@assignCall');
+    Route::post('/missed/call/log', [ApiController::class, 'registerCall']);
+    Route::post('/assign/call/log', [ApiController::class, 'assignCall']);
     
     
 });
