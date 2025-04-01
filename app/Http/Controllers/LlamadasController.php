@@ -453,7 +453,6 @@ class LlamadasController extends Controller
 
 
 
-
     // Funcion para agregar un comentario despues de realizar la llamada
     public function createLog_lod(Request $res)
     {
