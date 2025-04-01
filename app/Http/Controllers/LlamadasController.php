@@ -75,7 +75,7 @@ class LlamadasController extends Controller
         $column = $request->column; // Index
         $dir = $request->dir;
         $searchValue = $request->search;
-
+        
         $query = Llamadas::where('estado', 'No Atendida')
             ->where('no_visible', 0)
             ->with(['realizadas.user', 'grupo.cola', 'comentario.user', 'cola']);
@@ -119,6 +119,10 @@ class LlamadasController extends Controller
             $query->where(function ($query) use ($searchValue) {
                 $query->where('numero_llamante', 'like', '%' . $searchValue . '%');
             });
+        }
+
+        if($request->menu == 'No atendida' && $request->urgent){
+            $query->whereNotNull('grupo_id');
         }
 
         // 🔍 Agrupar llamadas por número si se solicita

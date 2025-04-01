@@ -22,7 +22,7 @@ class Llamadas extends Model
     }
 
     public function grupo(){
-        return $this->hasMany(Llamadas::class, 'grupo_id', 'id_llamada_estado');
+        return $this->hasMany(Llamadas::class, 'grupo_id', 'grupo_id');
     }
 
     // Relacion entre los departamentos o cola y la llamada principal 
