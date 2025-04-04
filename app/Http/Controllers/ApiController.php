@@ -85,6 +85,7 @@ class ApiController extends Controller
 
         // Buscamos las llamadas anteriores dentro del intervalo de tiempo
         $llamadaGroup = Llamadas::where('numero_llamante', $llamada->numero_llamante)
+            ->where('cola', $llamada->cola)
             ->where('grupo_id', null)
             ->where('created_at', '>=', $fechaMin)
             ->where('created_at', '<=', $llamada->created_at)

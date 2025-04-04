@@ -14,6 +14,7 @@ use App\User;
 use App\Cola;
 use App\configuracion;
 use App\userDepartamentos;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -34,28 +35,29 @@ class LlamadasController extends Controller
             ->with('departamentos') // Carga la relación departamentos
             ->get()
             ->pluck('departamentos.id_cola'); // Pluck para obtener los IDs de los departamentos
-
+        Log::info($departamentos);
 
         // Inicializa las consultas de llamadas
-        $query = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
+        $query = Llamadas::whereIn('cola', $departamentos);
 
+        Log::info($query->count());
         // Cuenta las llamadas pendientes
         $pendientes = $query->where('estado', 'No Atendida')->where('estado_tramitacion', 'No atendida')->count();
 
         // Inicializa una nueva consulta para contar las llamadas en proceso de trámite
-        $queryTramitandose = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
+        $queryTramitandose = Llamadas::whereIn('cola', $departamentos);
         $tramitandose = $queryTramitandose->where('estado', 'No Atendida')->where('estado_tramitacion', 'Tramitandose')->count();
 
         // Inicializa una nueva consulta para contar las llamadas completadas
-        $queryCompletadas = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
+        $queryCompletadas = Llamadas::whereIn('cola', $departamentos);
         $completadas = $queryCompletadas->where('estado', 'No Atendida')->where('estado_tramitacion', 'Completada')->count();
 
         // Cuenta todas las llamadas
-        $queryTodas = Llamadas::where('no_visible', 0)->whereIn('cola', $departamentos);
-        $todas = $queryTodas->where('estado', 'No Atendida')->count();
+        $todas = Llamadas::whereIn('cola', $departamentos)->count();
+
 
         // Cuenta las llamadas urgentes
-        $urgentes = Llamadas::whereNotNull('grupo_id')->where('grupo_id', '!=', '')->whereIn('cola', $departamentos)->count();
+        $urgentes = Llamadas::whereNotNull('grupo_id')->where('estado_tramitacion', 'No Atendida')->whereIn('cola', $departamentos)->count();
 
         // Devuelve la respuesta JSON con el recuento de llamadas
         return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas, 'urgentes' => $urgentes]);
