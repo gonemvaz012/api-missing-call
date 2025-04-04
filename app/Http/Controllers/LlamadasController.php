@@ -57,7 +57,14 @@ class LlamadasController extends Controller
 
 
         // Cuenta las llamadas urgentes
-        $urgentes = Llamadas::whereNotNull('grupo_id')->where('estado_tramitacion', 'No Atendida')->whereIn('cola', $departamentos)->count();
+        // $urgentes = Llamadas::whereNotNull('grupo_id')->where('estado_tramitacion', 'No Atendida')->whereIn('cola', $departamentos)->count();
+
+        $urgentes = Llamadas::whereNotNull('grupo_id')
+    ->where('estado_tramitacion', 'No Atendida')
+    ->whereIn('cola', $departamentos)
+    ->distinct('grupo_id')
+    ->count('grupo_id');
+
 
         // Devuelve la respuesta JSON con el recuento de llamadas
         return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas, 'urgentes' => $urgentes]);
@@ -123,8 +130,8 @@ class LlamadasController extends Controller
             });
         }
 
-        if($request->menu == 'No atendida' && $request->urgent){
-            $query->whereNotNull('grupo_id');
+        if ($request->menu === 'No atendida' && $request->urgent) {
+            $query->whereNotNull('grupo_id')->whereRaw('grupo_id REGEXP "^[0-9]+$"');
         }
 
         // 🔍 Agrupar llamadas por número si se solicita
