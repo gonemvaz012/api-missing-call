@@ -60,10 +60,10 @@ class LlamadasController extends Controller
         // $urgentes = Llamadas::whereNotNull('grupo_id')->where('estado_tramitacion', 'No Atendida')->whereIn('cola', $departamentos)->count();
 
         $urgentes = Llamadas::whereNotNull('grupo_id')
-    ->where('estado_tramitacion', 'No Atendida')
-    ->whereIn('cola', $departamentos)
-    ->distinct('grupo_id')
-    ->count('grupo_id');
+            ->where('estado_tramitacion', 'No Atendida')
+            ->whereIn('cola', $departamentos)
+            ->distinct('grupo_id')
+            ->count('grupo_id');
 
 
         // Devuelve la respuesta JSON con el recuento de llamadas
@@ -84,9 +84,8 @@ class LlamadasController extends Controller
         $column = $request->column; // Index
         $dir = $request->dir;
         $searchValue = $request->search;
-        
+
         $query = Llamadas::where('estado', 'No Atendida')
-            ->where('no_visible', 0)
             ->with(['realizadas.user', 'grupo.cola', 'comentario.user', 'cola']);
 
         if ($request->key) {
@@ -136,15 +135,27 @@ class LlamadasController extends Controller
 
         // 🔍 Agrupar llamadas por número si se solicita
         if ($request->agroup_call) {
-            $calls = $query->get();
+            $countQuery = clone $query;
+            $allCallsForCount = $countQuery->where(function ($q) {
+                $q->where('no_visible', 0)->orWhere('no_visible', 1);
+            })->get();
 
-            $grouped = $calls->groupBy('numero_llamante')->map(function ($group) {
+            // Luego obtenemos solo las visibles para mostrar
+            $visibleCalls = $query->where('no_visible', 0)->get();
+
+            // Agrupamos las llamadas visibles
+            $grouped = $visibleCalls->groupBy('numero_llamante')->map(function ($group) use ($allCallsForCount) {
                 $sorted = $group->sortByDesc('created_at');
                 $lastCall = $sorted->first();
                 $groupList = $sorted->skip(1)->values();
 
+                // Contamos TODAS las llamadas de este número (visibles y no visibles)
+                $allCallsForThisNumber = $allCallsForCount->where('numero_llamante', $lastCall->numero_llamante);
+
                 $lastCall->group_list = $groupList;
-                $lastCall->count = $group->count();
+                $lastCall->count = $allCallsForThisNumber->count(); // Total de llamadas
+                $lastCall->count_visible = $allCallsForThisNumber->where('no_visible', 0)->count();
+                $lastCall->count_hidden = $allCallsForThisNumber->where('no_visible', 1)->count();
 
                 return $lastCall;
             });
@@ -177,6 +188,11 @@ class LlamadasController extends Controller
                 'draw' => $request->draw,
             ];
         }
+
+        if (!$request->agroup_call) {
+            $query->where('no_visible', 0);
+        }
+
 
         // 🧾 Si no hay agrupación, usamos el paginador normal de Laravel
         $projects = $query->paginate($length);
