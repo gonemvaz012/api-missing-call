@@ -215,7 +215,6 @@ class LlamadasController extends Controller
 
     public function createCommets(Request $res)
     {
-        // Validación básica
         if (!isset($res->id)) {
             return response()->json([
                 'state' => false,
@@ -223,7 +222,6 @@ class LlamadasController extends Controller
             ], 400);
         }
 
-        // Obtener la llamada principal
         $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
 
         if (!$llamada) {
@@ -233,7 +231,6 @@ class LlamadasController extends Controller
             ], 404);
         }
 
-        // Determinar qué llamadas procesar
         $llamadas_a_procesar = [];
         $ids_a_procesar = [];
 
@@ -261,17 +258,8 @@ class LlamadasController extends Controller
         $resultados = [];
 
         foreach ($llamadas_a_procesar as $call) {
-            // Crear o actualizar registro en llamadasRealizadas
-            $update = llamadasRealizadas::where('id_llamada_estado', $call->id_llamada_estado)->latest()->first();
-            if (!$update) {
-                $update = new llamadasRealizadas();
-                $update->id_llamada_estado = $call->id_llamada_estado;
-                $update->id_usuario = $res->user_id;
-            }
-
-            $update->comentarios = $res->comentario;
-            $update->devolucion_efectiva = $res->completa ? true : false;
-            $update->save();
+            // Usar la función original para guardar gestión
+            $gestion = $this->crearGestion($call, $res);
 
             // Actualizar estado si no está completada
             if ($call->estado_tramitacion !== 'Completada') {
@@ -279,17 +267,16 @@ class LlamadasController extends Controller
                 $call->save();
             }
 
-            // Si tiene grupo_id, actualizar a todas las llamadas del grupo
+            // Si tiene grupo_id, actualizar el grupo completo
             if (!is_null($call->grupo_id)) {
                 Llamadas::where('grupo_id', $call->grupo_id)
                     ->where('estado_tramitacion', '!=', 'Completada')
                     ->update(['estado_tramitacion' => $nuevoEstado]);
             }
 
-            $resultados[] = $update;
+            $resultados[] = $gestion;
         }
 
-        // Preparar respuesta
         $response = ['state' => true];
 
         if (count($resultados) > 1) {
@@ -302,7 +289,7 @@ class LlamadasController extends Controller
         return response()->json($response);
     }
 
-    
+
     private function crearGestion($llamada, $request)
     {
         $date = Carbon::now();
@@ -319,68 +306,6 @@ class LlamadasController extends Controller
 
         $gestion->save();
         return $gestion;
-    }
-
-
-    // create comentarios 
-    public function createCommets_old(Request $res)
-    {
-
-        // revisamnos el proceso para ver si tiene un grupo 
-        $llamada = Llamadas::where('id_llamada_estado', $res->id)->with('grupo')->first();
-        if ($llamada && $llamada->grupo_id) {
-
-            foreach ($llamada->grupo as $call) {
-                // Guardaremos la gestion en proceso  
-                $date = Carbon::now();
-                $gestion = new gestionesRealizadas();
-                $gestion->fecha = $date->format('Y-m-d');
-                $gestion->hora = $date;
-                $gestion->id_usuario = $res->user_id;
-                $gestion->comentarios = $res->comentario;
-                $gestion->id_llamada_estado = $call->id_llamada_estado;
-                //  Si la function recibe la llamada completa la valida y procesa los datos 
-                if ($res->completa) {
-                    $gestion->devolucion_efectiva = true;
-                }
-                $gestion->save();
-                //  Si la function recibe la llamada completa la valida y procesa los datos 
-                $micall = Llamadas::where('id_llamada_estado', $call->id_llamada_estado)->first();
-                if ($res->completa) {
-                    $micall->estado_tramitacion = 'Completada';
-                    $micall->save();
-                } else {
-                    $micall->estado_tramitacion = 'Tramitandose';
-                    $micall->save();
-                }
-            }
-            return response()->json(['state' => true, 'data' => $llamada]);
-        } else {
-            // Guardaremos la gestion en proceso  
-            $date = Carbon::now();
-            $gestion = new gestionesRealizadas();
-            $gestion->fecha = $date->format('Y-m-d');
-            $gestion->hora = $date;
-            $gestion->id_usuario = $res->user_id;
-            $gestion->comentarios = $res->comentario;
-            $gestion->id_llamada_estado = $res->id;
-            //  Si la function recibe la llamada completa la valida y procesa los datos 
-            if ($res->completa) {
-                $gestion->devolucion_efectiva = true;
-            }
-            $gestion->save();
-            //  Si la function recibe la llamada completa la valida y procesa los datos 
-
-
-            if ($res->completa) {
-                $llamada->estado_tramitacion = 'Completada';
-                $llamada->save();
-            } else {
-                $llamada->estado_tramitacion = 'Tramitandose';
-                $llamada->save();
-            }
-            return response()->json(['state' => true, 'data' => $gestion]);
-        }
     }
 
 
