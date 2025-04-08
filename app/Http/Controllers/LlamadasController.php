@@ -23,9 +23,61 @@ class LlamadasController extends Controller
 {
 
 
-
-
     public function LlamadasCount(Request $request)
+    {
+        $userId = $request->user_id;
+
+        // Obtén los IDs de los departamentos asignados al usuario
+        $departamentos = UserDepartamentos::where('user_id', $userId)
+            ->with('departamentos')
+            ->get()
+            ->pluck('departamentos.id_cola');
+
+        Log::info($departamentos);
+
+        // Pendientes: estado = 'No Atendida', estado_tramitacion IN ['No atendida', 'Tramitandose']
+        $pendientes = Llamadas::whereIn('cola', $departamentos)
+            ->where('estado', 'No Atendida')
+            ->whereIn('estado_tramitacion', ['No atendida', 'Tramitandose'])
+            ->count();
+
+        // Tramitándose: estado = 'No Atendida', estado_tramitacion = 'Tramitandose'
+        $tramitandose = Llamadas::whereIn('cola', $departamentos)
+            ->where('estado', 'No Atendida')
+            ->where('estado_tramitacion', 'Tramitandose')
+            ->count();
+
+        // Completadas: estado = 'No Atendida', estado_tramitacion = 'Completada'
+        $completadas = Llamadas::whereIn('cola', $departamentos)
+            ->where('estado', 'No Atendida')
+            ->where('estado_tramitacion', 'Completada')
+            ->count();
+
+        // Todas las llamadas
+        $todas = Llamadas::whereIn('cola', $departamentos)->count();
+
+        $gruposUrgentes = Llamadas::select('grupo_id')
+            ->whereNotNull('grupo_id')
+            ->whereIn('cola', $departamentos)
+            ->whereIn('estado_tramitacion', ['No atendida', 'Tramitandose'])
+            ->groupBy('grupo_id')
+            ->pluck('grupo_id');
+
+        // Contar la cantidad de grupos urgentes válidos
+        $urgentes = $gruposUrgentes->count();
+
+        return response()->json([
+            'pendientes' => $pendientes,
+            'tramitandose' => $tramitandose,
+            'completadas' => $completadas,
+            'todas' => $todas,
+            'urgentes' => $urgentes
+        ]);
+    }
+
+
+
+    public function LlamadasCount_old(Request $request)
     {
         // Obtén el ID del usuario autenticado (o el ID del usuario proporcionado en la solicitud, según sea necesario)
         $userId = $request->user_id;
@@ -105,7 +157,13 @@ class LlamadasController extends Controller
         }
 
         if ($request->menu && $request->menu != 0) {
-            $query->where('estado_tramitacion', $request->menu);
+            if ($request->menu === 'No atendida') {
+                // Mostrar llamadas con estado_tramitacion 'No atendida' o 'Tramitandose'
+                $query->whereIn('estado_tramitacion', ['No atendida', 'Tramitandose']);
+            } else {
+                // Otro valor: filtra por ese estado directamente
+                $query->where('estado_tramitacion', $request->menu);
+            }
         }
 
         if ($request->filterDate) {
@@ -436,6 +494,71 @@ class LlamadasController extends Controller
         $update = llamadasRealizadas::where('id_llamada_estado', $res->id)->latest()->first();
 
         if (!$update) {
+            $update = new llamadasRealizadas();
+            $update->id_llamada_estado = $res->id;
+            $update->id_usuario = $res->user_id;
+        }
+
+        $update->comentarios = $res->comentario;
+        $update->devolucion_efectiva = $res->completa ? true : false;
+        $update->save();
+
+        $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
+        if ($llamada) {
+            $nuevoEstado = $res->completa ? 'Completada' : 'Tramitandose';
+            $llamada->estado_tramitacion = $nuevoEstado;
+            $llamada->save();
+
+            // Si tiene grupo_id, actualizar todas las llamadas del grupo
+            if (!is_null($llamada->grupo_id)) {
+                Llamadas::where('grupo_id', $llamada->grupo_id)->update([
+                    'estado_tramitacion' => $nuevoEstado
+                ]);
+            }
+        }
+
+        // Si se recibieron llamadas agrupadas seleccionadas, procesarlas también
+        if ($res->has('ids') && is_array($res->ids)) {
+            foreach ($res->ids as $idAgrupada) {
+                if ($idAgrupada == $res->id) continue;
+
+                $registro = llamadasRealizadas::where('id_llamada_estado', $idAgrupada)->latest()->first();
+
+                if (!$registro) {
+                    $registro = new llamadasRealizadas();
+                    $registro->id_llamada_estado = $idAgrupada;
+                    $registro->id_usuario = $res->user_id;
+                }
+
+                $registro->comentarios = $res->comentario;
+                $registro->devolucion_efectiva = $res->completa ? true : false;
+                $registro->save();
+
+                $llamadaAgrupada = Llamadas::where('id_llamada_estado', $idAgrupada)->first();
+                if ($llamadaAgrupada) {
+                    $llamadaAgrupada->estado_tramitacion = $res->completa ? 'Completada' : 'Tramitandose';
+                    $llamadaAgrupada->save();
+
+                    // Si esta llamada también tiene grupo_id, actualizar todo el grupo
+                    if (!is_null($llamadaAgrupada->grupo_id)) {
+                        Llamadas::where('grupo_id', $llamadaAgrupada->grupo_id)->update([
+                            'estado_tramitacion' => $res->completa ? 'Completada' : 'Tramitandose'
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return response()->json(['state' => true, 'data' => $llamada]);
+    }
+
+
+    public function createLog_old(Request $res)
+    {
+        // Actualizar el registro principal (id único)
+        $update = llamadasRealizadas::where('id_llamada_estado', $res->id)->latest()->first();
+
+        if (!$update) {
             // Si no existe, se crea
             $update = new llamadasRealizadas();
             $update->id_llamada_estado = $res->id;
@@ -482,30 +605,6 @@ class LlamadasController extends Controller
 
 
 
-    // Funcion para agregar un comentario despues de realizar la llamada
-    public function createLog_lod(Request $res)
-    {
-        $update = llamadasRealizadas::where('id_llamada_estado', $res->id)->latest()->first();
-        $update->comentarios = $res->comentario;
-        if ($res->completa) {
-            $update->devolucion_efectiva = true;
-        }
-        $update->save();
-
-        //  Si la function recibe la llamada completa la valida y procesa los datos 
-        $llamada = Llamadas::where('id_llamada_estado', $res->id)->first();
-        if ($res->completa) {
-            $llamada->estado_tramitacion = 'Completada';
-            $llamada->save();
-        } else {
-            $llamada->estado_tramitacion = 'Tramitandose';
-            $llamada->save();
-        }
-
-
-        return response()->json(['state' => true, 'data' => $llamada]);
-    }
-
     // FUNCIONES NUEVAS 
     // Guardar el registro de una nueva llamada 
     public function llamadaSaliente(Request $res)
@@ -539,11 +638,11 @@ class LlamadasController extends Controller
             ];
 
 
-            // $datos = "hala";
+            $datos = "hala";
 
-            // $envioID = 'api' . $realizada->id_llamada_realizada;
+            $envioID = 'api' . $realizada->id_llamada_realizada;
 
-            // return response()->json(['datos' => $datos, 'state' => $envioID]);
+            return response()->json(['datos' => $datos, 'state' => $envioID]);
 
 
             $response = Http::withToken($res->token)
