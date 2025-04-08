@@ -76,52 +76,6 @@ class LlamadasController extends Controller
     }
 
 
-
-    public function LlamadasCount_old(Request $request)
-    {
-        // Obtén el ID del usuario autenticado (o el ID del usuario proporcionado en la solicitud, según sea necesario)
-        $userId = $request->user_id;
-
-        // Obtén los IDs de los departamentos asignados al usuario
-        $departamentos = UserDepartamentos::where('user_id', $userId)
-            ->with('departamentos') // Carga la relación departamentos
-            ->get()
-            ->pluck('departamentos.id_cola'); // Pluck para obtener los IDs de los departamentos
-        Log::info($departamentos);
-
-        // Inicializa las consultas de llamadas
-        $query = Llamadas::whereIn('cola', $departamentos);
-
-        Log::info($query->count());
-        // Cuenta las llamadas pendientes
-        $pendientes = $query->where('estado', 'No Atendida')->where('estado_tramitacion', 'No atendida')->count();
-
-        // Inicializa una nueva consulta para contar las llamadas en proceso de trámite
-        $queryTramitandose = Llamadas::whereIn('cola', $departamentos);
-        $tramitandose = $queryTramitandose->where('estado', 'No Atendida')->where('estado_tramitacion', 'Tramitandose')->count();
-
-        // Inicializa una nueva consulta para contar las llamadas completadas
-        $queryCompletadas = Llamadas::whereIn('cola', $departamentos);
-        $completadas = $queryCompletadas->where('estado', 'No Atendida')->where('estado_tramitacion', 'Completada')->count();
-
-        // Cuenta todas las llamadas
-        $todas = Llamadas::whereIn('cola', $departamentos)->count();
-
-
-        // Cuenta las llamadas urgentes
-        // $urgentes = Llamadas::whereNotNull('grupo_id')->where('estado_tramitacion', 'No Atendida')->whereIn('cola', $departamentos)->count();
-
-        $urgentes = Llamadas::whereNotNull('grupo_id')
-            ->where('estado_tramitacion', 'No Atendida')
-            ->whereIn('cola', $departamentos)
-            ->distinct('grupo_id')
-            ->count('grupo_id');
-
-
-        // Devuelve la respuesta JSON con el recuento de llamadas
-        return response()->json(['pendientes' => $pendientes, 'tramitandose' => $tramitandose, 'completadas' => $completadas, 'todas' => $todas, 'urgentes' => $urgentes]);
-    }
-
     public function Pendientes()
     {
         return Llamadas::where('estado', 1)->get();
@@ -259,75 +213,6 @@ class LlamadasController extends Controller
 
 
 
-
-    public function Listado_old(Request $request)
-    {
-
-        $columns = ['id_llamada_estado'];
-        $length = $request->length;
-        $column = $request->column; //Index
-        $dir = $request->dir;
-        $searchValue = $request->search;
-
-        if ($request->key) {
-            $query = Llamadas::where('estado', 'No Atendida')
-                ->where('no_visible', 0)
-                ->with('realizadas.user', 'grupo.cola')->with('comentario.user')->with('cola')->orderBy($request->key, $request->order);
-        } else {
-            $query = Llamadas::where('estado', 'No Atendida')
-                ->where('no_visible', 0)
-                ->with('realizadas.user', 'grupo.cola')->with('comentario.user')->with('cola')->orderBy($columns[$column], $dir);
-        }
-
-
-        if ($request->filterCola && $request->filterCola != 0) {
-            $query->where('cola', $request->filterCola);
-        }
-        // // Si el usuario selecciona mostrar todos los departamentos
-        if (!$request->filterCola) {
-
-            // * Obtén los IDs de los departamentos asignados al usuario
-            $departamentos = UserDepartamentos::where('user_id', $request->user_id)
-                ->with('departamentos') // Carga la relación departamentos
-                ->get()
-                ->pluck('departamentos.id_cola'); // Pluck para obtener los IDs
-
-            // * Filtra por los departamentos asignados al usuario
-            $query->whereIn('cola', $departamentos);
-        }
-
-
-        if ($request->menu && $request->menu != 0) {
-            $query->where('estado_tramitacion', $request->menu);
-        }
-
-        if ($request->filterDate) {
-            $desde = Carbon::create($request->filterDate['desde'])->format('Y-m-d');
-            $hasta = Carbon::create($request->filterDate['hasta'])->format('Y-m-d');
-            if ($desde == $hasta) {
-                $query->whereDate('fecha', '=', $hasta);
-            } else {
-                $query->whereDate('fecha', '>=', $desde)->whereDate('fecha', '<=', $hasta);
-            }
-        }
-
-        if ($request->filterDay) {
-            $hoy = Carbon::now()->subDay(1)->format('Y-m-d');
-            $query->whereDate('created_at', '=', $hoy);
-        }
-
-        if ($searchValue) {
-            $query->where(function ($query) use ($searchValue) {
-                $query->where('numero_llamante', 'like', '%' . $searchValue . '%');
-            });
-        }
-
-        $projects = $query->paginate($length);
-        return ['data' => $projects, 'draw' => $request->draw];
-    }
-
-
-
     public function createCommets(Request $res)
     {
         // Validación básica
@@ -352,10 +237,8 @@ class LlamadasController extends Controller
         $llamadas_a_procesar = [];
         $ids_a_procesar = [];
 
-        // Caso 1: Si se enviaron IDs específicos (aunque sea array vacío)
         if ($res->has('ids')) {
             if (is_array($res->ids) && !empty($res->ids)) {
-                // Si hay IDs en el array, procesar esos IDs más el principal
                 $ids_a_procesar = $res->ids;
                 if (!in_array($llamada->id_llamada_estado, $ids_a_procesar)) {
                     $ids_a_procesar[] = $llamada->id_llamada_estado;
@@ -363,35 +246,47 @@ class LlamadasController extends Controller
                 $llamadas_a_procesar = Llamadas::whereIn('id_llamada_estado', $ids_a_procesar)->get();
                 \Log::info('Procesando llamadas con IDs específicos', ['ids' => $ids_a_procesar]);
             } else {
-                // Si el array de IDs está vacío, pasar al siguiente caso
                 goto check_group;
             }
-        }
-        // Caso 2: Llamada con grupo tradicional (procesar todo el grupo)
-        elseif ($llamada->grupo_id) {
+        } elseif ($llamada->grupo_id) {
             check_group:
             $llamadas_a_procesar = Llamadas::where('grupo_id', $llamada->grupo_id)->get();
             \Log::info('Procesando grupo tradicional', ['grupo_id' => $llamada->grupo_id]);
-        }
-        // Caso 3: Llamada individual
-        else {
+        } else {
             $llamadas_a_procesar = [$llamada];
             \Log::info('Procesando llamada individual', ['id' => $llamada->id_llamada_estado]);
         }
 
-        // Procesar todas las llamadas
+        $nuevoEstado = $res->completa ? 'Completada' : 'Tramitandose';
         $resultados = [];
-        foreach ($llamadas_a_procesar as $call) {
-            // Guardar la gestión
-            $gestion = $this->crearGestion($call, $res);
 
-            // Actualizar estado de la llamada solo si no está completada
+        foreach ($llamadas_a_procesar as $call) {
+            // Crear o actualizar registro en llamadasRealizadas
+            $update = llamadasRealizadas::where('id_llamada_estado', $call->id_llamada_estado)->latest()->first();
+            if (!$update) {
+                $update = new llamadasRealizadas();
+                $update->id_llamada_estado = $call->id_llamada_estado;
+                $update->id_usuario = $res->user_id;
+            }
+
+            $update->comentarios = $res->comentario;
+            $update->devolucion_efectiva = $res->completa ? true : false;
+            $update->save();
+
+            // Actualizar estado si no está completada
             if ($call->estado_tramitacion !== 'Completada') {
-                $call->estado_tramitacion = $res->completa ? 'Completada' : 'Tramitandose';
+                $call->estado_tramitacion = $nuevoEstado;
                 $call->save();
             }
 
-            $resultados[] = $gestion;
+            // Si tiene grupo_id, actualizar a todas las llamadas del grupo
+            if (!is_null($call->grupo_id)) {
+                Llamadas::where('grupo_id', $call->grupo_id)
+                    ->where('estado_tramitacion', '!=', 'Completada')
+                    ->update(['estado_tramitacion' => $nuevoEstado]);
+            }
+
+            $resultados[] = $update;
         }
 
         // Preparar respuesta
@@ -399,7 +294,7 @@ class LlamadasController extends Controller
 
         if (count($resultados) > 1) {
             $response['data'] = $resultados;
-            $response['processed_ids'] = $llamadas_a_procesar->pluck('id_llamada_estado')->toArray();
+            $response['processed_ids'] = collect($llamadas_a_procesar)->pluck('id_llamada_estado')->toArray();
         } else {
             $response['data'] = $resultados[0];
         }
@@ -407,6 +302,7 @@ class LlamadasController extends Controller
         return response()->json($response);
     }
 
+    
     private function crearGestion($llamada, $request)
     {
         $date = Carbon::now();
@@ -638,11 +534,11 @@ class LlamadasController extends Controller
             ];
 
 
-            $datos = "hala";
+            // $datos = "hala";
 
-            $envioID = 'api' . $realizada->id_llamada_realizada;
+            // $envioID = 'api' . $realizada->id_llamada_realizada;
 
-            return response()->json(['datos' => $datos, 'state' => $envioID]);
+            // return response()->json(['datos' => $datos, 'state' => $envioID]);
 
 
             $response = Http::withToken($res->token)
