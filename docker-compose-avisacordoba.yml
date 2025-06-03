@@ -1,5 +1,5 @@
 services:
-  app:
+  appAvisa:
     container_name: missing_call_api-avisacordoba
     build:
       context: .
