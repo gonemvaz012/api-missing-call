@@ -10,9 +10,9 @@ services:
     volumes:
       - www:/var/www
     depends_on:
-      - db_cordoba
+      - mysql
     links:
-      - db_cordoba:db_cordoba
+      - mysql:mysql
     networks:
       - nginxproxymanager_default
 
@@ -22,15 +22,15 @@ services:
     env_file: stack.env
     restart: always
     environment:
-      PMA_HOST: db_cordoba
+      PMA_HOST: mysql
     ports:
       - ${PHPMYADMIN_LOCAL_PORT}:80
     links:
-      - db_cordoba:db_cordoba
+      - mysql:mysql
     networks:
       - nginxproxymanager_default
 
-  db_cordoba:
+  mysql:
     container_name: missing_call_api-avisacordoba-mysql
     image: mysql:latest
     env_file: stack.env
